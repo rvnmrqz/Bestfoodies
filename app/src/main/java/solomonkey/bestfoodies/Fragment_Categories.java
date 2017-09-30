@@ -8,11 +8,13 @@ import android.support.v4.app.Fragment;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.ImageButton;
 
 
 public class Fragment_Categories extends Fragment {
 
     Context context;
+    ImageButton btnBreakfast,btnLunch,btnDinner,btnDessert;
 
     public Fragment_Categories() {}
 
@@ -32,5 +34,38 @@ public class Fragment_Categories extends Fragment {
         super.onViewCreated(view, savedInstanceState);
         //initialize here
 
+        btnBreakfast = (ImageButton) getActivity().findViewById(R.id.imageButton2);
+        btnLunch = (ImageButton) getActivity().findViewById(R.id.imageButton3);
+        btnDinner = (ImageButton) getActivity().findViewById(R.id.imageButton4);
+        btnDessert = (ImageButton) getActivity().findViewById(R.id.imageButton5);
+        buttonListener();
+    }
+
+    protected void buttonListener(){
+        btnBreakfast.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                //add value to a temporary class
+                MainActivity.changeBackstack(true,new Fragment_Recipe_List(),"List");
+            }
+        });
+        btnLunch.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                MainActivity.changeBackstack(true,new Fragment_Recipe_List(),"List");
+            }
+        });
+        btnDinner.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                MainActivity.changeBackstack(true,new Fragment_Recipe_List(),"List");
+            }
+        });
+        btnDessert.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                MainActivity.changeBackstack(true,new Fragment_Recipe_List(),"List");
+            }
+        });
     }
 }

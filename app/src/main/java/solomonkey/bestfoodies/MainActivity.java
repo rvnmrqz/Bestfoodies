@@ -56,11 +56,16 @@ public class MainActivity extends AppCompatActivity
 
     @Override
     public void onBackPressed() {
+        Log.wtf("onBackPressed","backstack count is  = "+fragmentManager.getBackStackEntryCount());
         DrawerLayout drawer = (DrawerLayout) findViewById(R.id.drawer_layout);
         if (drawer.isDrawerOpen(GravityCompat.START)) {
             drawer.closeDrawer(GravityCompat.START);
         } else {
-            super.onBackPressed();
+            if(fragmentManager.getBackStackEntryCount() == 0 && !homeLayout.isShown()){
+                clearBackstack();
+            }else {
+                super.onBackPressed();
+            }
         }
     }
 
