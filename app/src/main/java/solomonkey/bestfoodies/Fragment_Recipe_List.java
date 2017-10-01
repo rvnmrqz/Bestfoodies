@@ -2,13 +2,20 @@ package solomonkey.bestfoodies;
 
 import android.content.Context;
 import android.content.Intent;
+import android.content.res.Resources;
+import android.graphics.Rect;
 import android.net.ConnectivityManager;
 import android.net.NetworkInfo;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.design.widget.Snackbar;
 import android.support.v4.app.Fragment;
+import android.support.v7.app.AppCompatActivity;
+import android.support.v7.widget.DefaultItemAnimator;
+import android.support.v7.widget.GridLayoutManager;
+import android.support.v7.widget.RecyclerView;
 import android.util.Log;
+import android.util.TypedValue;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -36,7 +43,9 @@ import com.android.volley.toolbox.Volley;
 import org.json.JSONArray;
 import org.json.JSONObject;
 
+import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 
@@ -48,6 +57,10 @@ public class Fragment_Recipe_List extends Fragment {
     TextView messagelayout_textview;
     Button messagelayout_button;
 
+    //adapaters
+    private RecyclerView recyclerView;
+    private RecipeAdapter adapter;
+    private List<Recipes> recipesList;
 
     public Fragment_Recipe_List() {}
 
@@ -68,6 +81,8 @@ public class Fragment_Recipe_List extends Fragment {
     @Override
     public void onViewCreated(View view, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
+        ((AppCompatActivity)getActivity()).getSupportActionBar().setTitle(TempHolder.selectedCategory);
+
         loadingLayout = (LinearLayout) getActivity().findViewById(R.id.loadinglayout);
         messageLayout = (LinearLayout) getActivity().findViewById(R.id.messagelayout);
         resultLayout = (LinearLayout) getActivity().findViewById(R.id.resultlayout);
@@ -80,8 +95,17 @@ public class Fragment_Recipe_List extends Fragment {
             }
         });
 
-        Toast.makeText(context, TempHolder.selectedCategory+"", Toast.LENGTH_SHORT).show();
+        recyclerView = (RecyclerView) getActivity().findViewById(R.id.recyclerView);
 
+        recipesList = new ArrayList<>();
+        adapter = new RecipeAdapter(context, recipesList);
+
+        //Recycler
+        RecyclerView.LayoutManager mLayoutManager = new GridLayoutManager(context,2);
+        recyclerView.setLayoutManager(mLayoutManager);
+        recyclerView.addItemDecoration(new GridSpacingItemDecoration(2,dpToPx(10),true));
+        recyclerView.setItemAnimator(new DefaultItemAnimator());
+        recyclerView.setAdapter(adapter);
         loadRecipe();
     }
 
@@ -92,7 +116,7 @@ public class Fragment_Recipe_List extends Fragment {
             showSnackbar();
             showMessage("No Internet Connection");
         }else{
-            String server_url = TempHolder.HOST_ADDRESS+"/get_data.php";
+            final String server_url = TempHolder.HOST_ADDRESS+"/get_data.php";
             RequestQueue requestQueue = Volley.newRequestQueue(context);
             StringRequest request = new StringRequest(Request.Method.POST, server_url,
                     new Response.Listener<String>() {
@@ -103,14 +127,28 @@ public class Fragment_Recipe_List extends Fragment {
                                     Log.wtf("onResponse","Response:" +response);
                                     //clear the list in the UI
 
+                                    String recipe_id,recipe_name,ingredients,procedures,rating,reviews,thumbnailLink,videolink;
+
                                     JSONObject object = new JSONObject(response);
                                     JSONArray Jarray  = object.getJSONArray("mydata");
+                                    Recipes recipes;
 
                                     if(Jarray.length()>0) {
                                         Log.wtf("onResponse","Result count: "+Jarray.length());
                                         for (int i = 0; i < Jarray.length(); i++) {
                                             JSONObject Jasonobject = Jarray.getJSONObject(i);
-
+                                            recipe_id = Jasonobject.getString("recipe_id");
+                                            recipe_name = Jasonobject.getString("name");
+                                            ingredients = Jasonobject.getString("ingredients");
+                                            procedures = Jasonobject.getString("procedures");
+                                            rating = Jasonobject.getString("rating");
+                                            reviews = Jasonobject.getString("reviews");
+                                            thumbnailLink = Jasonobject.getString("imagefilename");
+                                            videolink = Jasonobject.getString("videofilename");
+                                            recipes = new Recipes(recipe_id,recipe_name,ingredients,procedures,rating,reviews,thumbnailLink,videolink);
+                                            recipesList.add(recipes);
+                                            adapter.notifyDataSetChanged();
+                                            Log.wtf("Response","recipe_id:"+recipe_id+"\nrecipe_name:" + recipe_name + "\ningredients:" + ingredients + "\nprocedures:" + procedures + "\nrating:" + rating + "\nthumbnailLink:" + thumbnailLink + "\nvideolink:" + videolink + "\n");
                                         }
                                         showResults();
                                     }else{
@@ -135,7 +173,7 @@ public class Fragment_Recipe_List extends Fragment {
                 @Override
                 protected Map<String, String> getParams() throws AuthFailureError {
                     Map<String,String> params = new HashMap<>();
-                    String query = "SELECT re.*,count(id)reviews,coalesce(avg(rating),0) as ratings from tbl_recipes re LEFT JOIN tbl_ratings ra ON re.recipe_id = ra.recipe_id WHERE category = '"+TempHolder.selectedCategory+"' GROUP BY ra.recipe_id ;";
+                    String query = "SELECT re.*,coalesce(count(id),0) reviews,coalesce(avg(rating),0) rating from tbl_recipes re LEFT JOIN tbl_ratings ra ON re.recipe_id = ra.recipe_id WHERE category = '"+TempHolder.selectedCategory+"' GROUP BY ra.recipe_id ;";
                     params.put("qry",query);
                     Log.wtf("loadRecipe","Map<> Query: "+query);
                     return params;
@@ -151,31 +189,48 @@ public class Fragment_Recipe_List extends Fragment {
         }
     }
 
-    protected String getVolleyError(VolleyError volleyError){
-        String message="";
-        if (volleyError instanceof NetworkError) {
-            message = "Network Error Encountered";
-            Log.wtf("getVolleyError (Volley Error)","NetworkError");
-        } else if (volleyError instanceof ServerError) {
-            message = "Please check your internet connection";
-            Log.wtf("getVolleyError (Volley Error)","ServerError");
-        } else if (volleyError instanceof AuthFailureError) {
-            message = "Please check your internet connection";
-            Log.wtf("getVolleyError (Volley Error)","AuthFailureError");
-        } else if (volleyError instanceof ParseError) {
-            message = "An error encountered, Please try again";
-            Log.wtf("getVolleyError (Volley Error)","ParseError");
-        } else if (volleyError instanceof NoConnectionError) {
-            message = "No internet connection";
-            Log.wtf("getVolleyError (Volley Error)","NoConnectionError");
-        } else if (volleyError instanceof TimeoutError) {
-            message = "Connection Timeout";
-            Log.wtf("getVolleyError (Volley Error)","TimeoutError");
+
+
+    public class GridSpacingItemDecoration extends RecyclerView.ItemDecoration {
+
+        private int spanCount;
+        private int spacing;
+        private boolean includeEdge;
+
+        public GridSpacingItemDecoration(int spanCount, int spacing, boolean includeEdge) {
+            this.spanCount = spanCount;
+            this.spacing = spacing;
+            this.includeEdge = includeEdge;
         }
-        return message;
+
+        @Override
+        public void getItemOffsets(Rect outRect, View view, RecyclerView parent, RecyclerView.State state) {
+            int position = parent.getChildAdapterPosition(view); // item position
+            int column = position % spanCount; // item column
+
+            if (includeEdge) {
+                outRect.left = spacing - column * spacing / spanCount; // spacing - column * ((1f / spanCount) * spacing)
+                outRect.right = (column + 1) * spacing / spanCount; // (column + 1) * ((1f / spanCount) * spacing)
+
+                if (position < spanCount) { // top edge
+                    outRect.top = spacing;
+                }
+                outRect.bottom = spacing; // item bottom
+            } else {
+                outRect.left = column * spacing / spanCount; // column * ((1f / spanCount) * spacing)
+                outRect.right = spacing - (column + 1) * spacing / spanCount; // spacing - (column + 1) * ((1f /    spanCount) * spacing)
+                if (position >= spanCount) {
+                    outRect.top = spacing; // item top
+                }
+            }
+        }
+    }
+    private int dpToPx(int dp) {
+        Resources r = getResources();
+        return Math.round(TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_DIP, dp, r.getDisplayMetrics()));
     }
 
-
+    //SCREEN TRANSITIONS
     protected void showResults(){
         messageLayout.setVisibility(View.INVISIBLE);
         resultLayout.setVisibility(View.VISIBLE);
@@ -205,11 +260,32 @@ public class Fragment_Recipe_List extends Fragment {
                 .setActionTextColor(getResources().getColor(android.R.color.holo_red_light ))
                 .show();
     }
-
-
     private boolean isNetworkAvailable() {
         ConnectivityManager connectivityManager = (ConnectivityManager) context.getSystemService(Context.CONNECTIVITY_SERVICE);
         NetworkInfo activeNetworkInfo = connectivityManager.getActiveNetworkInfo();
         return activeNetworkInfo != null && activeNetworkInfo.isConnected();
+    }
+    protected String getVolleyError(VolleyError volleyError){
+        String message="";
+        if (volleyError instanceof NetworkError) {
+            message = "Network Error Encountered";
+            Log.wtf("getVolleyError (Volley Error)","NetworkError");
+        } else if (volleyError instanceof ServerError) {
+            message = "Please check your internet connection";
+            Log.wtf("getVolleyError (Volley Error)","ServerError");
+        } else if (volleyError instanceof AuthFailureError) {
+            message = "Please check your internet connection";
+            Log.wtf("getVolleyError (Volley Error)","AuthFailureError");
+        } else if (volleyError instanceof ParseError) {
+            message = "An error encountered, Please try again";
+            Log.wtf("getVolleyError (Volley Error)","ParseError");
+        } else if (volleyError instanceof NoConnectionError) {
+            message = "No internet connection";
+            Log.wtf("getVolleyError (Volley Error)","NoConnectionError");
+        } else if (volleyError instanceof TimeoutError) {
+            message = "Connection Timeout";
+            Log.wtf("getVolleyError (Volley Error)","TimeoutError");
+        }
+        return message;
     }
 }
