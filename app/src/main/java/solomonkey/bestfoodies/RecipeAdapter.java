@@ -7,6 +7,7 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageView;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import com.squareup.picasso.Picasso;
 
@@ -30,8 +31,14 @@ public class RecipeAdapter extends RecyclerView.Adapter<RecipeAdapter.MyViewHold
             recipename = (TextView) view.findViewById(R.id.card_recipeName);
             ratings = (TextView) view.findViewById(R.id.card_rating);
             thumbnail = (ImageView) view.findViewById(R.id.card_thumbnail);
-
+            view.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    Toast.makeText(mContext, recipename.getText(), Toast.LENGTH_SHORT).show();
+                }
+            });
         }
+
     }
 
 
@@ -43,7 +50,7 @@ public class RecipeAdapter extends RecyclerView.Adapter<RecipeAdapter.MyViewHold
     @Override
     public MyViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
         View itemView = LayoutInflater.from(parent.getContext())
-                .inflate(R.layout.recipe_cardlayout, parent, false);
+                .inflate(R.layout.recipe_card, parent, false);
 
         return new MyViewHolder(itemView);
     }
@@ -53,7 +60,6 @@ public class RecipeAdapter extends RecyclerView.Adapter<RecipeAdapter.MyViewHold
         Recipes recipes = recipesList.get(position);
         holder.recipename.setText(recipes.getRecipe_name());
         holder.ratings.setText(recipes.getRating()+"");
-
         // loading album cover using Picasso library
         Picasso.with(mContext).load(recipes.getThumbnailLink()).error(R.drawable.no_image).into(holder.thumbnail);
 

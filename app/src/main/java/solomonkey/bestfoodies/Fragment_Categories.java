@@ -5,6 +5,7 @@ import android.net.Uri;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -27,6 +28,7 @@ public class Fragment_Categories extends Fragment {
     public void onAttach(Context context) {
         super.onAttach(context);
         this.context = context;
+        Log.wtf("onAttach","Categories");
     }
 
     @Override
@@ -40,6 +42,7 @@ public class Fragment_Categories extends Fragment {
         btnDessert = (ImageButton) getActivity().findViewById(R.id.imageButton5);
         buttonListener();
     }
+
 
     protected void buttonListener(){
         btnBreakfast.setOnClickListener(new View.OnClickListener() {

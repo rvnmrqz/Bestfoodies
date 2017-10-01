@@ -75,7 +75,7 @@ public class Fragment_Recipe_List extends Fragment {
     public void onAttach(Context context) {
         super.onAttach(context);
         this.context = context;
-
+        Log.wtf("onAttach","Fragment_Recipe_List");
     }
 
     @Override
