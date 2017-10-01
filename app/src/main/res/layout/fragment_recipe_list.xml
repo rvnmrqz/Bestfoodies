@@ -1,15 +1,60 @@
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:id="@+id/parentPanel"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     tools:context="solomonkey.bestfoodies.Fragment_Recipe_List">
 
-    <TextView
-        android:layout_centerInParent="true"
-        android:textSize="18sp"
-        android:text="Recipe List"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content" />
-
+    <!--LOADING LAYOUT-->
+    <LinearLayout
+        android:visibility="invisible"
+        android:id="@+id/loadinglayout"
+        android:orientation="vertical"
+        android:gravity="center"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent">
+        <ProgressBar
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content" />
+        <TextView
+            android:text="Loading Recipes"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content" />
+    </LinearLayout>
+    <!--MESSAGE LAYOUT-->
+    <LinearLayout
+        android:id="@+id/messagelayout"
+        android:visibility="invisible"
+        android:orientation="vertical"
+        android:gravity="center"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent">
+        <TextView
+            android:id="@+id/messagelayout_textview"
+            android:padding="8dp"
+            android:text="MESSAGE HERE"
+            android:textSize="18sp"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content" />
+        <Button
+            android:id="@+id/messagelayout_button"
+            android:textColor="#fff"
+            android:background="@color/colorPrimary"
+            android:text="Refresh"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content" />
+    </LinearLayout>
+    <!--RESULTS LAYOUT-->
+    <LinearLayout
+        android:id="@+id/resultlayout"
+        android:visibility="invisible"
+        android:gravity="center"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent">
+        <TextView
+            android:text="RESULT LAYOUT"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content" />
+    </LinearLayout>
 
 </RelativeLayout>

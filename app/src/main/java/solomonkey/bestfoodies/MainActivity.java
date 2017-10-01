@@ -21,9 +21,9 @@ import android.view.animation.AnimationUtils;
 import android.widget.LinearLayout;
 import android.widget.Toast;
 
-public class MainActivity extends AppCompatActivity
-        implements NavigationView.OnNavigationItemSelectedListener {
+public class MainActivity extends AppCompatActivity  implements NavigationView.OnNavigationItemSelectedListener {
 
+    static NavigationView navigationView;
     static ActionBar staticActionBar;
     static Context staticContext;
     static FragmentManager fragmentManager;
@@ -50,8 +50,10 @@ public class MainActivity extends AppCompatActivity
         drawer.setDrawerListener(toggle);
         toggle.syncState();
 
-        NavigationView navigationView = (NavigationView) findViewById(R.id.nav_view);
+        navigationView = (NavigationView) findViewById(R.id.nav_view);
         navigationView.setNavigationItemSelectedListener(this);
+
+        navigationView.getMenu().getItem(0).setChecked(true);
     }
 
     @Override
@@ -63,6 +65,7 @@ public class MainActivity extends AppCompatActivity
         } else {
             if(fragmentManager.getBackStackEntryCount() == 0 && !homeLayout.isShown()){
                 clearBackstack();
+                navigationView.getMenu().getItem(0).setChecked(true);
             }else {
                 super.onBackPressed();
             }
@@ -79,24 +82,26 @@ public class MainActivity extends AppCompatActivity
             case R.id.nav_home:
                 clearBackstack();
                 getSupportActionBar().setTitle("Home");
+                navigationView.getMenu().getItem(0).setChecked(true);
+               // navigationView.setCheckedItem(R.id.nav_home);
                 homeLayout.setVisibility(View.VISIBLE);
                 containerLayout.setVisibility(View.INVISIBLE);
                 break;
             case R.id.nav_categories:
                 getSupportActionBar().setTitle("Categories");
+                navigationView.getMenu().getItem(1).setChecked(true);
                 homeLayout.setVisibility(View.INVISIBLE);
                 changeBackstack(false,new Fragment_Categories(), "categories");
                 containerLayout.setVisibility(View.VISIBLE);
                 break;
             case R.id.nav_developers:
+                navigationView.getMenu().getItem(2).setChecked(true);
                 getSupportActionBar().setTitle("Developers");
                 homeLayout.setVisibility(View.INVISIBLE);
                 changeBackstack(false,new Fragment_Developers(), "developers");
                 containerLayout.setVisibility(View.VISIBLE);
                 break;
         }
-
-
         DrawerLayout drawer = (DrawerLayout) findViewById(R.id.drawer_layout);
         drawer.closeDrawer(GravityCompat.START);
         return true;
@@ -122,7 +127,6 @@ public class MainActivity extends AppCompatActivity
         containerLayout.setVisibility(View.INVISIBLE);
         homeLayout.setVisibility(View.VISIBLE);
     }
-
 
 
 }

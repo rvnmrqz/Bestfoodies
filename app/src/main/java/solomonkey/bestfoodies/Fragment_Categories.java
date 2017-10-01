@@ -46,24 +46,28 @@ public class Fragment_Categories extends Fragment {
             @Override
             public void onClick(View v) {
                 //add value to a temporary class
+                TempHolder.selectedCategory = "Breakfast";
                 MainActivity.changeBackstack(true,new Fragment_Recipe_List(),"List");
             }
         });
         btnLunch.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
+                TempHolder.selectedCategory = "Lunch";
                 MainActivity.changeBackstack(true,new Fragment_Recipe_List(),"List");
             }
         });
         btnDinner.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
+                TempHolder.selectedCategory = "Dinner";
                 MainActivity.changeBackstack(true,new Fragment_Recipe_List(),"List");
             }
         });
         btnDessert.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
+                TempHolder.selectedCategory = "Dinner";
                 MainActivity.changeBackstack(true,new Fragment_Recipe_List(),"List");
             }
         });

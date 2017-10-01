@@ -1,0 +1,85 @@
+<ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    tools:context="solomonkey.bestfoodies.Fragment_Recipe_Opened">
+    <LinearLayout
+        android:orientation="vertical"
+        android:padding="16dp"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent">
+        <!--VIDEO-->
+        <VideoView
+            android:id="@+id/videoView"
+            android:layout_width="match_parent"
+            android:layout_height="200dp" />
+        <LinearLayout
+            android:id="@+id/layout_videoLoading"
+            android:gravity="center"
+            android:layout_margin="8dp"
+            android:orientation="horizontal"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content">
+            <ProgressBar
+                android:layout_width="22dp"
+                android:layout_height="22dp" />
+            <TextView
+                android:layout_gravity="center_vertical"
+                android:layout_marginLeft="8dp"
+                android:text="Loading Video"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content" />
+        </LinearLayout>
+        <!--RECIPE NAME-->
+        <TextView
+            android:text="My Sample Recipe Name For Bestfoodies"
+            android:id="@+id/txtRecipeName"
+            android:textStyle="bold"
+            android:textSize="24sp"
+            android:textAlignment="center"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content" />
+        <!--INGREDIENTS-->
+        <TextView
+            android:layout_marginTop="16dp"
+            android:text="Ingredients"
+            android:textStyle="bold"
+            android:textSize="18sp"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content" />
+        <TextView
+            android:layout_marginTop="8dp"
+            android:text="2 slice of breads
+1 egg
+2-4 slice of lettuce
+2-4 slices of bacon
+Salt and Pepper to taste"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content" />
+        <!--PROCEDURE-->
+        <TextView
+            android:layout_marginTop="16dp"
+            android:text="Procedures"
+            android:textStyle="bold"
+            android:textSize="18sp"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content" />
+        <TextView
+            android:layout_marginTop="8dp"
+            android:text="Toast the bread.
+Crack 1 egg
+Once egg are cooked, sprinkle tops with salt and pepper to taste.
+Flip the sandwich.
+Add lettuce, egg, bacon.
+Fold the sandwich together and and remove from heat."
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content" />
+        <!--FINAL PHOTO-->
+        <ImageView
+            android:src="@drawable/navbar"
+            android:scaleType="fitCenter"
+            android:layout_width="match_parent"
+            android:layout_height="200dp" />
+    </LinearLayout>
+
+</ScrollView>
