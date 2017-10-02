@@ -23,7 +23,7 @@ public class RecipeAdapter extends RecyclerView.Adapter<RecipeAdapter.MyViewHold
     private List<Recipes> recipesList;
 
     public class MyViewHolder extends RecyclerView.ViewHolder {
-        public TextView recipename, ratings;
+        public TextView recipe_id,recipename, ratings;
         public ImageView thumbnail;
 
         public MyViewHolder(View view) {
@@ -41,7 +41,6 @@ public class RecipeAdapter extends RecyclerView.Adapter<RecipeAdapter.MyViewHold
 
     }
 
-
     public RecipeAdapter(Context mContext, List<Recipes> recipesList) {
         this.mContext = mContext;
         this.recipesList = recipesList;
@@ -58,36 +57,12 @@ public class RecipeAdapter extends RecyclerView.Adapter<RecipeAdapter.MyViewHold
     @Override
     public void onBindViewHolder(final MyViewHolder holder, int position) {
         Recipes recipes = recipesList.get(position);
+        holder.recipe_id.setText(recipes.getRecipe_id());
         holder.recipename.setText(recipes.getRecipe_name());
         holder.ratings.setText(recipes.getRating()+"");
         // loading album cover using Picasso library
         Picasso.with(mContext).load(recipes.getThumbnailLink()).error(R.drawable.no_image).into(holder.thumbnail);
-
     }
-
-
-    /**
-     * Click listener for popup menu items
-
-    class MyMenuItemClickListener implements PopupMenu.OnMenuItemClickListener {
-
-        public MyMenuItemClickListener() {
-        }
-
-        @Override
-        public boolean onMenuItemClick(MenuItem menuItem) {
-            switch (menuItem.getItemId()) {
-                case R.id.action_add_favourite:
-                    Toast.makeText(mContext, "Add to favourite", Toast.LENGTH_SHORT).show();
-                    return true;
-                case R.id.action_play_next:
-                    Toast.makeText(mContext, "Play next", Toast.LENGTH_SHORT).show();
-                    return true;
-                default:
-            }
-            return false;
-        }
-    }*/
 
     @Override
     public int getItemCount() {

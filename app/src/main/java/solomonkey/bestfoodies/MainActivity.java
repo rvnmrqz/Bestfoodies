@@ -52,7 +52,6 @@ public class MainActivity extends AppCompatActivity  implements NavigationView.O
 
         navigationView = (NavigationView) findViewById(R.id.nav_view);
         navigationView.setNavigationItemSelectedListener(this);
-
         navigationView.getMenu().getItem(0).setChecked(true);
     }
 
@@ -66,6 +65,7 @@ public class MainActivity extends AppCompatActivity  implements NavigationView.O
             if(fragmentManager.getBackStackEntryCount() == 0 && !homeLayout.isShown()){
                 clearBackstack();
                 navigationView.getMenu().getItem(0).setChecked(true);
+                getSupportActionBar().setTitle("Home");
             }else {
                 super.onBackPressed();
             }
@@ -83,7 +83,6 @@ public class MainActivity extends AppCompatActivity  implements NavigationView.O
                 clearBackstack();
                 getSupportActionBar().setTitle("Home");
                 navigationView.getMenu().getItem(0).setChecked(true);
-               // navigationView.setCheckedItem(R.id.nav_home);
                 homeLayout.setVisibility(View.VISIBLE);
                 containerLayout.setVisibility(View.INVISIBLE);
                 break;
@@ -91,14 +90,14 @@ public class MainActivity extends AppCompatActivity  implements NavigationView.O
                 getSupportActionBar().setTitle("Categories");
                 navigationView.getMenu().getItem(1).setChecked(true);
                 homeLayout.setVisibility(View.INVISIBLE);
-                changeBackstack(false,new Fragment_Categories(), "categories");
+                changeBackstack(false,new Fragment_Categories(), "Categories");
                 containerLayout.setVisibility(View.VISIBLE);
                 break;
             case R.id.nav_developers:
                 navigationView.getMenu().getItem(2).setChecked(true);
                 getSupportActionBar().setTitle("Developers");
                 homeLayout.setVisibility(View.INVISIBLE);
-                changeBackstack(false,new Fragment_Developers(), "developers");
+                changeBackstack(false,new Fragment_Developers(), "Developers");
                 containerLayout.setVisibility(View.VISIBLE);
                 break;
         }

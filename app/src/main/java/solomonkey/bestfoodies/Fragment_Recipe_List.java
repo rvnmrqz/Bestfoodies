@@ -79,10 +79,14 @@ public class Fragment_Recipe_List extends Fragment {
     }
 
     @Override
+    public void onResume() {
+        super.onResume();
+        ((AppCompatActivity)getActivity()).getSupportActionBar().setTitle(TempHolder.selectedCategory);
+    }
+
+    @Override
     public void onViewCreated(View view, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
-        ((AppCompatActivity)getActivity()).getSupportActionBar().setTitle(TempHolder.selectedCategory);
-
         loadingLayout = (LinearLayout) getActivity().findViewById(R.id.loadinglayout);
         messageLayout = (LinearLayout) getActivity().findViewById(R.id.messagelayout);
         resultLayout = (LinearLayout) getActivity().findViewById(R.id.resultlayout);

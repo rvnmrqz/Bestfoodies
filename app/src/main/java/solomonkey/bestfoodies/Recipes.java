@@ -90,4 +90,8 @@ public class Recipes {
     public void setReviews(String reviews) {
         this.reviews = reviews;
     }
+
+    public String toString(){
+         return recipe_id+" "+recipe_name+" "+ingredients;
+    }
 }

@@ -5,11 +5,13 @@ import android.net.Uri;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
+import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageButton;
+import android.widget.Toast;
 
 
 public class Fragment_Categories extends Fragment {
@@ -50,29 +52,35 @@ public class Fragment_Categories extends Fragment {
             public void onClick(View v) {
                 //add value to a temporary class
                 TempHolder.selectedCategory = "Breakfast";
-                MainActivity.changeBackstack(true,new Fragment_Recipe_List(),"List");
+                MainActivity.changeBackstack(true,new Fragment_Recipe_List(),"Breakfast");
             }
         });
         btnLunch.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 TempHolder.selectedCategory = "Lunch";
-                MainActivity.changeBackstack(true,new Fragment_Recipe_List(),"List");
+                MainActivity.changeBackstack(true,new Fragment_Recipe_List(),"Lunch");
             }
         });
         btnDinner.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 TempHolder.selectedCategory = "Dinner";
-                MainActivity.changeBackstack(true,new Fragment_Recipe_List(),"List");
+                MainActivity.changeBackstack(true,new Fragment_Recipe_List(),"Dinner");
             }
         });
         btnDessert.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                TempHolder.selectedCategory = "Dinner";
-                MainActivity.changeBackstack(true,new Fragment_Recipe_List(),"List");
+                TempHolder.selectedCategory = "Dessert";
+                MainActivity.changeBackstack(true,new Fragment_Recipe_List(),"Dessert");
             }
         });
+    }
+
+    @Override
+    public void onResume() {
+        super.onResume();
+        ((AppCompatActivity)getActivity()).getSupportActionBar().setTitle("Categories");
     }
 }
