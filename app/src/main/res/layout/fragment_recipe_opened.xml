@@ -22,7 +22,7 @@
     <!--MESSAGE LAYOUT-->
     <LinearLayout
         android:id="@+id/messagelayout"
-        android:visibility="visible"
+        android:visibility="invisible"
         android:orientation="vertical"
         android:gravity="center"
         android:layout_width="match_parent"
@@ -44,7 +44,7 @@
     </LinearLayout>
     <!--LOADED RECIPE LAYOUT-->
     <ScrollView
-        android:visibility="invisible"
+        android:visibility="visible"
         android:id="@+id/loaded_Recipelayout"
         android:layout_width="match_parent"
         android:layout_height="match_parent">
@@ -53,12 +53,6 @@
             android:padding="16dp"
             android:layout_width="match_parent"
             android:layout_height="match_parent">
-            <!--VIDEO
-            <com.google.android.youtube.player.YouTubePlayerSupportFragment
-                android:id="@+id/videoView"
-                android:layout_width="match_parent"
-                android:layout_height="200dp" />
-                -->
             <fragment
                 android:id="@+id/youtube_fragment"
                 android:name="com.google.android.youtube.player.YouTubePlayerSupportFragment"
@@ -100,21 +94,27 @@
                 android:layout_height="wrap_content" />
             <!--FINAL IMAGE-->
             <ImageView
+                android:layout_marginTop="14dp"
                 android:id="@+id/img_recipe_finalimage"
                 android:scaleType="fitCenter"
                 android:layout_width="match_parent"
                 android:layout_height="200dp" />
             <TextView
                 android:text="Rating"
-                android:textSize="18sp"
+                android:textStyle="bold"
+                android:textSize="16sp"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content" />
             <RatingBar
-                android:numStars="5"
-                android:stepSize="0.1"
-                android:isIndicator="true"
+                android:layout_gravity="center_horizontal"
+                android:id="@+id/ratingbar"
+                style="?android:attr/ratingBarStyle"
                 android:layout_width="wrap_content"
-                android:layout_height="wrap_content" />
+                android:layout_height="wrap_content"
+                android:isIndicator="true"
+                android:max="5"
+                android:numStars="5"
+                android:stepSize="0.01" />
             <TextView
                 android:id="@+id/txt_recipe_reviewcount"
                 android:text="Rated by 5 People"
@@ -122,7 +122,5 @@
                 android:layout_height="wrap_content" />
         </LinearLayout>
     </ScrollView>
-
-
 
 </RelativeLayout>

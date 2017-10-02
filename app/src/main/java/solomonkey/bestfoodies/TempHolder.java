@@ -11,4 +11,5 @@ public class TempHolder {
     public static String listLoaderWhereClause;
     public static String selectedCategory;
     public static String selectedRecipeID;
+
 }

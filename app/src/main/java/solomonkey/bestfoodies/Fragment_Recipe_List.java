@@ -52,6 +52,7 @@ import java.util.Map;
 public class Fragment_Recipe_List extends Fragment {
 
     Context context;
+
     //layouts
     LinearLayout loadingLayout,messageLayout,resultLayout;
     TextView messagelayout_textview;
@@ -63,7 +64,6 @@ public class Fragment_Recipe_List extends Fragment {
     private List<Recipes> recipesList;
 
     public Fragment_Recipe_List() {}
-
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
@@ -128,9 +128,7 @@ public class Fragment_Recipe_List extends Fragment {
                                 try{
                                     Log.wtf("onResponse","Response:" +response);
                                     //clear the list in the UI
-
                                     String recipe_id,recipe_name,ingredients,procedures,rating,reviews,thumbnailfile,videolink;
-
                                     JSONObject object = new JSONObject(response);
                                     JSONArray Jarray  = object.getJSONArray("mydata");
                                     Recipes recipes;
@@ -190,8 +188,31 @@ public class Fragment_Recipe_List extends Fragment {
             requestQueue.add(request);
         }
     }
+    protected String getVolleyError(VolleyError volleyError){
+        String message="";
+        if (volleyError instanceof NetworkError) {
+            message = "Network Error Encountered";
+            Log.wtf("getVolleyError (Volley Error)","NetworkError");
+        } else if (volleyError instanceof ServerError) {
+            message = "Please check your internet connection";
+            Log.wtf("getVolleyError (Volley Error)","ServerError");
+        } else if (volleyError instanceof AuthFailureError) {
+            message = "Please check your internet connection";
+            Log.wtf("getVolleyError (Volley Error)","AuthFailureError");
+        } else if (volleyError instanceof ParseError) {
+            message = "An error encountered, Please try again";
+            Log.wtf("getVolleyError (Volley Error)","ParseError");
+        } else if (volleyError instanceof NoConnectionError) {
+            message = "No internet connection";
+            Log.wtf("getVolleyError (Volley Error)","NoConnectionError");
+        } else if (volleyError instanceof TimeoutError) {
+            message = "Connection Timeout";
+            Log.wtf("getVolleyError (Volley Error)","TimeoutError");
+        }
+        return message;
+    }
 
-
+    //CARDS PLACEMENT
     public class GridSpacingItemDecoration extends RecyclerView.ItemDecoration {
 
         private int spanCount;
@@ -259,7 +280,7 @@ public class Fragment_Recipe_List extends Fragment {
                         startActivity(new Intent(android.provider.Settings.ACTION_WIFI_SETTINGS));
                     }
                 })
-                .setActionTextColor(getResources().getColor(android.R.color.holo_red_light ))
+                .setActionTextColor(getResources().getColor(R.color.colorPrimary))
                 .show();
     }
     private boolean isNetworkAvailable() {
@@ -267,27 +288,5 @@ public class Fragment_Recipe_List extends Fragment {
         NetworkInfo activeNetworkInfo = connectivityManager.getActiveNetworkInfo();
         return activeNetworkInfo != null && activeNetworkInfo.isConnected();
     }
-    protected String getVolleyError(VolleyError volleyError){
-        String message="";
-        if (volleyError instanceof NetworkError) {
-            message = "Network Error Encountered";
-            Log.wtf("getVolleyError (Volley Error)","NetworkError");
-        } else if (volleyError instanceof ServerError) {
-            message = "Please check your internet connection";
-            Log.wtf("getVolleyError (Volley Error)","ServerError");
-        } else if (volleyError instanceof AuthFailureError) {
-            message = "Please check your internet connection";
-            Log.wtf("getVolleyError (Volley Error)","AuthFailureError");
-        } else if (volleyError instanceof ParseError) {
-            message = "An error encountered, Please try again";
-            Log.wtf("getVolleyError (Volley Error)","ParseError");
-        } else if (volleyError instanceof NoConnectionError) {
-            message = "No internet connection";
-            Log.wtf("getVolleyError (Volley Error)","NoConnectionError");
-        } else if (volleyError instanceof TimeoutError) {
-            message = "Connection Timeout";
-            Log.wtf("getVolleyError (Volley Error)","TimeoutError");
-        }
-        return message;
-    }
+
 }

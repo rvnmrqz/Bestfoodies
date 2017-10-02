@@ -1,9 +1,6 @@
 package solomonkey.bestfoodies;
 
 import android.content.Context;
-import android.media.Image;
-import android.media.MediaPlayer;
-import android.net.Uri;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
@@ -14,13 +11,9 @@ import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
-import android.widget.ProgressBar;
-import android.widget.RelativeLayout;
+import android.widget.RatingBar;
 import android.widget.ScrollView;
 import android.widget.TextView;
-import android.widget.Toast;
-import android.widget.VideoView;
-
 import com.android.volley.AuthFailureError;
 import com.android.volley.DefaultRetryPolicy;
 import com.android.volley.NetworkError;
@@ -38,14 +31,9 @@ import com.android.volley.toolbox.Volley;
 import com.google.android.youtube.player.YouTubeInitializationResult;
 import com.google.android.youtube.player.YouTubePlayer;
 import com.google.android.youtube.player.YouTubePlayerSupportFragment;
-import com.google.android.youtube.player.YouTubePlayerView;
 import com.squareup.picasso.Picasso;
-
 import org.json.JSONArray;
 import org.json.JSONObject;
-import org.w3c.dom.Text;
-
-import java.net.URI;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -68,7 +56,7 @@ public class Fragment_Recipe_Opened extends Fragment{
     //recipe
     TextView txt_RecipeName,txt_recipe_ingredients,txt_recipe_procedure,txt_recipe_reviewcount;
     ImageView img_recipe_finalimage;
-
+    RatingBar ratingBar;
     String link;
 
     @Override
@@ -85,8 +73,28 @@ public class Fragment_Recipe_Opened extends Fragment{
         txt_recipe_procedure = (TextView) getActivity().findViewById(R.id.txt_recipe_procedure);
         txt_recipe_reviewcount = (TextView) getActivity().findViewById(R.id.txt_recipe_reviewcount);
         img_recipe_finalimage = (ImageView) getActivity().findViewById(R.id.img_recipe_finalimage);
+        ratingBar = (RatingBar) getActivity().findViewById(R.id.ratingbar);
         youTubePlayerSupportFragment = (YouTubePlayerSupportFragment) getChildFragmentManager().findFragmentById(R.id.youtube_fragment);
         loadRecipe();
+        ratingbarListener();
+
+        MainActivity.searchItem.setVisible(false);
+    }
+
+    @Override
+    public void onDetach() {
+        super.onDetach();
+        Log.wtf("Opened Fragment","OnDetach");
+        MainActivity.searchItem.setVisible(true);
+    }
+
+    protected void ratingbarListener(){
+        ratingBar.setOnRatingBarChangeListener(new RatingBar.OnRatingBarChangeListener() {
+            @Override
+            public void onRatingChanged(RatingBar ratingBar, float rating, boolean fromUser) {
+                Log.wtf("Ratingbar",""+rating);
+            }
+        });
     }
 
     protected void loadRecipe(){
@@ -103,15 +111,16 @@ public class Fragment_Recipe_Opened extends Fragment{
                                     Log.wtf("onResponse","Response:" +response);
                                     //clear the list in the UI
 
-                                    String rating,thumbnailfile,videolink;
+                                    String thumbnailfile,videolink;
+                                    double rating;
 
                                     JSONObject object = new JSONObject(response);
                                     JSONArray Jarray  = object.getJSONArray("mydata");
                                     if(Jarray.length()>0) {
 
                                         JSONObject Jasonobject = Jarray.getJSONObject(0);
-                                        rating = Jasonobject.getString("rating");
-
+                                        rating = Jasonobject.getDouble("rating");
+                                        ratingBar.setRating((float)rating);
                                         txt_RecipeName.setText(Jasonobject.getString("name"));
                                         txt_recipe_ingredients.setText(Jasonobject.getString("ingredients"));
                                         txt_recipe_procedure.setText(Jasonobject.getString("procedures"));
@@ -158,7 +167,6 @@ public class Fragment_Recipe_Opened extends Fragment{
             request.setShouldCache(false);
             requestQueue.add(request);
     }
-
     protected String getVolleyError(VolleyError volleyError){
         String message="";
         if (volleyError instanceof NetworkError) {
@@ -182,7 +190,6 @@ public class Fragment_Recipe_Opened extends Fragment{
         }
         return message;
     }
-
     protected void prepareVideo(){
         try{
             Log.wtf("prepareVideo","Link: "+link);
@@ -205,8 +212,6 @@ public class Fragment_Recipe_Opened extends Fragment{
         }
     }
 
-
-
     //screen transitions
     protected void showLoadingLayout(){
         layout_recipe.setVisibility(View.INVISIBLE);
@@ -226,9 +231,6 @@ public class Fragment_Recipe_Opened extends Fragment{
         layout_message.setVisibility(View.INVISIBLE);
     }
 
-
-
-    //*****************************************************************
     public Fragment_Recipe_Opened() {}
 
     @Override

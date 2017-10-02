@@ -11,15 +11,14 @@ import android.support.v4.widget.DrawerLayout;
 import android.support.v7.app.ActionBar;
 import android.support.v7.app.ActionBarDrawerToggle;
 import android.support.v7.app.AppCompatActivity;
+import android.support.v7.widget.SearchView;
 import android.support.v7.widget.Toolbar;
 import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
-import android.view.animation.Animation;
-import android.view.animation.AnimationUtils;
 import android.widget.LinearLayout;
-import android.widget.Toast;
+
 
 public class MainActivity extends AppCompatActivity  implements NavigationView.OnNavigationItemSelectedListener {
 
@@ -30,6 +29,8 @@ public class MainActivity extends AppCompatActivity  implements NavigationView.O
     static FragmentTransaction fragmentTransaction;
     Toolbar toolbar;
     static LinearLayout containerLayout, homeLayout;
+    public static  MenuItem searchItem;
+    static SearchView searchView;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -53,6 +54,7 @@ public class MainActivity extends AppCompatActivity  implements NavigationView.O
         navigationView = (NavigationView) findViewById(R.id.nav_view);
         navigationView.setNavigationItemSelectedListener(this);
         navigationView.getMenu().getItem(0).setChecked(true);
+
     }
 
     @Override
@@ -62,12 +64,17 @@ public class MainActivity extends AppCompatActivity  implements NavigationView.O
         if (drawer.isDrawerOpen(GravityCompat.START)) {
             drawer.closeDrawer(GravityCompat.START);
         } else {
-            if(fragmentManager.getBackStackEntryCount() == 0 && !homeLayout.isShown()){
-                clearBackstack();
-                navigationView.getMenu().getItem(0).setChecked(true);
-                getSupportActionBar().setTitle("Home");
-            }else {
+            if (!searchView.isIconified()) {
+                searchView.setIconified(true);
                 super.onBackPressed();
+            } else {
+                if(fragmentManager.getBackStackEntryCount() == 0 && !homeLayout.isShown()){
+                    clearBackstack();
+                    navigationView.getMenu().getItem(0).setChecked(true);
+                    getSupportActionBar().setTitle("Home");
+                }else {
+                    super.onBackPressed();
+                }
             }
         }
     }
@@ -108,6 +115,13 @@ public class MainActivity extends AppCompatActivity  implements NavigationView.O
 
     public static void changeBackstack(boolean addToBackStack, Fragment fragment,String name){
         try{
+            homeLayout.setVisibility(View.INVISIBLE);
+            containerLayout.setVisibility(View.VISIBLE);
+
+            if (!searchView.isIconified() && !name.equalsIgnoreCase("Search")) {
+                searchView.setIconified(true);
+            }
+
             fragmentTransaction = fragmentManager.beginTransaction();
             fragmentTransaction.replace(R.id.main_container,fragment);
             if(addToBackStack){
@@ -127,5 +141,32 @@ public class MainActivity extends AppCompatActivity  implements NavigationView.O
         homeLayout.setVisibility(View.VISIBLE);
     }
 
+    @Override
+    public boolean onCreateOptionsMenu(Menu menu) {
+        getMenuInflater().inflate(R.menu.main,menu);
+        searchItem = menu.findItem(R.id.search);
+        searchView = (SearchView) searchItem.getActionView();
+        searchView.setOnSearchClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Log.wtf("searchView","Search is clicked");
+                changeBackstack(true,new Fragment_Search(),"Search");
+            }
+        });
+        searchView.setOnQueryTextListener(new SearchView.OnQueryTextListener() {
+            @Override
+            public boolean onQueryTextSubmit(String query) {
+                Log.wtf("searchView","onQueryTextSubmit");
 
+                return false;
+            }
+            @Override
+            public boolean onQueryTextChange(String s) {
+                Log.wtf("searchView","onQueryTextChange");
+                return false;
+            }
+        });
+
+        return true;
+    }
 }
