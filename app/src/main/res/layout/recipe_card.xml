@@ -16,7 +16,7 @@
             android:layout_width="match_parent"
             android:layout_height="match_parent">
             <TextView
-                android:id="@+id/recipe_id"
+                android:id="@+id/card_recipe_id"
                 android:visibility="gone"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content" />
@@ -32,6 +32,10 @@
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_below="@id/card_thumbnail"
+                android:gravity="center_vertical"
+                android:textAlignment="center"
+                android:maxLines="2"
+                android:lines="2"
                 android:paddingLeft="10dp"
                 android:paddingRight="10dp"
                 android:paddingTop="10dp"

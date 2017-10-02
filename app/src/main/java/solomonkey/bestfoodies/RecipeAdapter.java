@@ -2,6 +2,7 @@ package solomonkey.bestfoodies;
 
 import android.content.Context;
 import android.support.v7.widget.RecyclerView;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -28,13 +29,16 @@ public class RecipeAdapter extends RecyclerView.Adapter<RecipeAdapter.MyViewHold
 
         public MyViewHolder(View view) {
             super(view);
+            recipe_id = (TextView) view.findViewById(R.id.card_recipe_id);
             recipename = (TextView) view.findViewById(R.id.card_recipeName);
             ratings = (TextView) view.findViewById(R.id.card_rating);
             thumbnail = (ImageView) view.findViewById(R.id.card_thumbnail);
             view.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
-                    Toast.makeText(mContext, recipename.getText(), Toast.LENGTH_SHORT).show();
+                    TempHolder.selectedRecipeID = recipe_id.getText().toString();
+                    MainActivity.changeBackstack(true,new Fragment_Recipe_Opened(),"Recipe");
+                    Log.wtf("Clicked Recipe ID",TempHolder.selectedRecipeID);
                 }
             });
         }

@@ -1,100 +1,128 @@
-<ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     tools:context="solomonkey.bestfoodies.Fragment_Recipe_Opened">
+    <!--LOADING LAYOUT-->
     <LinearLayout
+        android:visibility="invisible"
+        android:id="@+id/loadinglayout"
         android:orientation="vertical"
-        android:padding="16dp"
+        android:gravity="center"
         android:layout_width="match_parent"
         android:layout_height="match_parent">
-        <!--VIDEO-->
-        <VideoView
-            android:id="@+id/videoView"
-            android:layout_width="match_parent"
-            android:layout_height="200dp" />
-        <LinearLayout
-            android:id="@+id/layout_videoLoading"
-            android:gravity="center"
-            android:layout_margin="8dp"
-            android:orientation="horizontal"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content">
-            <ProgressBar
-                android:layout_width="22dp"
-                android:layout_height="22dp" />
-            <TextView
-                android:layout_gravity="center_vertical"
-                android:layout_marginLeft="8dp"
-                android:text="Loading Video"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content" />
-        </LinearLayout>
-        <!--RECIPE NAME-->
-        <TextView
-            android:text="My Sample Recipe Name For Bestfoodies"
-            android:id="@+id/txtRecipeName"
-            android:textStyle="bold"
-            android:textSize="24sp"
-            android:textAlignment="center"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content" />
-        <!--INGREDIENTS-->
-        <TextView
-            android:layout_marginTop="16dp"
-            android:text="Ingredients"
-            android:textStyle="bold"
-            android:textSize="18sp"
+        <ProgressBar
             android:layout_width="wrap_content"
             android:layout_height="wrap_content" />
         <TextView
-            android:layout_marginTop="8dp"
-            android:text="2 slice of breads
-1 egg
-2-4 slice of lettuce
-2-4 slices of bacon
-Salt and Pepper to taste"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content" />
-        <!--PROCEDURE-->
-        <TextView
-            android:layout_marginTop="16dp"
-            android:text="Procedures"
-            android:textStyle="bold"
-            android:textSize="18sp"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content" />
-        <TextView
-            android:layout_marginTop="8dp"
-            android:text="Toast the bread.
-Crack 1 egg
-Once egg are cooked, sprinkle tops with salt and pepper to taste.
-Flip the sandwich.
-Add lettuce, egg, bacon.
-Fold the sandwich together and and remove from heat."
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content" />
-        <!--FINAL PHOTO-->
-        <ImageView
-            android:src="@drawable/navbar"
-            android:scaleType="fitCenter"
-            android:layout_width="match_parent"
-            android:layout_height="200dp" />
-        <TextView
-            android:text="Rating"
-            android:textSize="18sp"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content" />
-        <RatingBar
-            android:numStars="5"
-            android:stepSize="0.1"
-            android:isIndicator="true"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content" />
-        <TextView
-            android:text="Rated by 5 People"
+            android:text="Loading Recipes"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content" />
     </LinearLayout>
+    <!--MESSAGE LAYOUT-->
+    <LinearLayout
+        android:id="@+id/messagelayout"
+        android:visibility="visible"
+        android:orientation="vertical"
+        android:gravity="center"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent">
+        <TextView
+            android:id="@+id/messagelayout_textview"
+            android:padding="8dp"
+            android:text="MESSAGE HERE"
+            android:textSize="18sp"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content" />
+        <Button
+            android:id="@+id/messagelayout_button"
+            android:textColor="#fff"
+            android:background="@color/colorPrimary"
+            android:text="Retry"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content" />
+    </LinearLayout>
+    <!--LOADED RECIPE LAYOUT-->
+    <ScrollView
+        android:visibility="invisible"
+        android:id="@+id/loaded_Recipelayout"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent">
+        <LinearLayout
+            android:orientation="vertical"
+            android:padding="16dp"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent">
+            <!--VIDEO
+            <com.google.android.youtube.player.YouTubePlayerSupportFragment
+                android:id="@+id/videoView"
+                android:layout_width="match_parent"
+                android:layout_height="200dp" />
+                -->
+            <fragment
+                android:id="@+id/youtube_fragment"
+                android:name="com.google.android.youtube.player.YouTubePlayerSupportFragment"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"/>
+            <!--RECIPE NAME-->
+            <TextView
+                android:id="@+id/txt_RecipeName"
+                android:textStyle="bold"
+                android:textSize="24sp"
+                android:textAlignment="center"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content" />
+            <!--INGREDIENTS-->
+            <TextView
+                android:text="Ingredients"
+                android:layout_marginTop="16dp"
+                android:textStyle="bold"
+                android:textSize="18sp"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content" />
+            <TextView
+                android:id="@+id/txt_recipe_ingredients"
+                android:layout_marginTop="8dp"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content" />
+            <!--PROCEDURE-->
+            <TextView
+                android:layout_marginTop="16dp"
+                android:text="Procedures"
+                android:textStyle="bold"
+                android:textSize="18sp"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content" />
+            <TextView
+                android:id="@+id/txt_recipe_procedure"
+                android:layout_marginTop="8dp"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content" />
+            <!--FINAL IMAGE-->
+            <ImageView
+                android:id="@+id/img_recipe_finalimage"
+                android:scaleType="fitCenter"
+                android:layout_width="match_parent"
+                android:layout_height="200dp" />
+            <TextView
+                android:text="Rating"
+                android:textSize="18sp"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content" />
+            <RatingBar
+                android:numStars="5"
+                android:stepSize="0.1"
+                android:isIndicator="true"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content" />
+            <TextView
+                android:id="@+id/txt_recipe_reviewcount"
+                android:text="Rated by 5 People"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content" />
+        </LinearLayout>
+    </ScrollView>
 
-</ScrollView>
+
+
+</RelativeLayout>

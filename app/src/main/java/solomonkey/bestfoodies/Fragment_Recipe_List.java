@@ -98,9 +98,7 @@ public class Fragment_Recipe_List extends Fragment {
                 loadRecipe();
             }
         });
-
         recyclerView = (RecyclerView) getActivity().findViewById(R.id.recyclerView);
-
         recipesList = new ArrayList<>();
         adapter = new RecipeAdapter(context, recipesList);
 
@@ -118,7 +116,7 @@ public class Fragment_Recipe_List extends Fragment {
         Log.wtf("loadRecipe","loadRecipe called");
         if(!isNetworkAvailable()){
             showSnackbar();
-            showMessage("No Internet Connection");
+            showMessage("No Internet Connection","Retry");
         }else{
             final String server_url = TempHolder.HOST_ADDRESS+"/get_data.php";
             RequestQueue requestQueue = Volley.newRequestQueue(context);
@@ -131,7 +129,7 @@ public class Fragment_Recipe_List extends Fragment {
                                     Log.wtf("onResponse","Response:" +response);
                                     //clear the list in the UI
 
-                                    String recipe_id,recipe_name,ingredients,procedures,rating,reviews,thumbnailLink,videolink;
+                                    String recipe_id,recipe_name,ingredients,procedures,rating,reviews,thumbnailfile,videolink;
 
                                     JSONObject object = new JSONObject(response);
                                     JSONArray Jarray  = object.getJSONArray("mydata");
@@ -147,20 +145,20 @@ public class Fragment_Recipe_List extends Fragment {
                                             procedures = Jasonobject.getString("procedures");
                                             rating = Jasonobject.getString("rating");
                                             reviews = Jasonobject.getString("reviews");
-                                            thumbnailLink = Jasonobject.getString("imagefilename");
-                                            videolink = Jasonobject.getString("videofilename");
-                                            recipes = new Recipes(recipe_id,recipe_name,ingredients,procedures,rating,reviews,thumbnailLink,videolink);
+                                            thumbnailfile = TempHolder.HOST_ADDRESS+"/images/"+Jasonobject.getString("imagefilename");
+                                            videolink = Jasonobject.getString("videolink");
+                                            recipes = new Recipes(recipe_id,recipe_name,ingredients,procedures,rating,reviews,thumbnailfile,videolink);
                                             recipesList.add(recipes);
                                             adapter.notifyDataSetChanged();
-                                            Log.wtf("Response","recipe_id:"+recipe_id+"\nrecipe_name:" + recipe_name + "\ningredients:" + ingredients + "\nprocedures:" + procedures + "\nrating:" + rating + "\nthumbnailLink:" + thumbnailLink + "\nvideolink:" + videolink + "\n");
+                                           // Log.wtf("Response","recipe_id:"+recipe_id+"\nrecipe_name:" + recipe_name + "\ningredients:" + ingredients + "\nprocedures:" + procedures + "\nrating:" + rating + "\nthumbnailLink:" + thumbnailLink + "\nvideolink:" + videolink + "\n");
                                         }
                                         showResults();
                                     }else{
-                                        showMessage("No Recipes to Display");
+                                        showMessage("No Recipes to Display","Refresh");
                                     }
                                 }catch (Exception ee)
                                 {
-                                    showMessage("An Error Occurred");
+                                    showMessage("An Error Occurred","Retry");
                                     Log.wtf("loadRecipe ERROR (onResponse)",ee.getMessage());
                                 }
                             }
@@ -170,14 +168,14 @@ public class Fragment_Recipe_List extends Fragment {
                         @Override
                         public void onErrorResponse(VolleyError volleyError) {
                             String message = getVolleyError(volleyError);
-                            showMessage(message);
+                            showMessage(message,"Retry");
                             Log.wtf("loadRecipe: onErrorResponse","Volley Error \n"+message);
                         }
                     }){
                 @Override
                 protected Map<String, String> getParams() throws AuthFailureError {
                     Map<String,String> params = new HashMap<>();
-                    String query = "SELECT re.*,coalesce(count(id),0) reviews,coalesce(avg(rating),0) rating from tbl_recipes re LEFT JOIN tbl_ratings ra ON re.recipe_id = ra.recipe_id WHERE category = '"+TempHolder.selectedCategory+"' GROUP BY ra.recipe_id ;";
+                    String query = "SELECT re.*,coalesce(count(id),0) reviews,coalesce(avg(rating),0) rating from tbl_recipes re LEFT JOIN tbl_ratings ra ON re.recipe_id = ra.recipe_id "+TempHolder.listLoaderWhereClause+" GROUP BY re.recipe_id ;";
                     params.put("qry",query);
                     Log.wtf("loadRecipe","Map<> Query: "+query);
                     return params;
@@ -192,7 +190,6 @@ public class Fragment_Recipe_List extends Fragment {
             requestQueue.add(request);
         }
     }
-
 
 
     public class GridSpacingItemDecoration extends RecyclerView.ItemDecoration {
@@ -240,11 +237,12 @@ public class Fragment_Recipe_List extends Fragment {
         resultLayout.setVisibility(View.VISIBLE);
         loadingLayout.setVisibility(View.INVISIBLE);
     }
-    protected void showMessage(String message){
+    protected void showMessage(String message, String buttonMessage){
         messageLayout.setVisibility(View.VISIBLE);
         resultLayout.setVisibility(View.INVISIBLE);
         loadingLayout.setVisibility(View.INVISIBLE);
         messagelayout_textview.setText(message);
+        messagelayout_button.setText(buttonMessage);
     }
     protected void showloadingLayout(){
         messageLayout.setVisibility(View.INVISIBLE);
