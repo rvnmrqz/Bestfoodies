@@ -18,6 +18,9 @@ import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.LinearLayout;
+import android.widget.ListView;
+import android.widget.ProgressBar;
+import android.widget.TextView;
 
 
 public class MainActivity extends AppCompatActivity  implements NavigationView.OnNavigationItemSelectedListener {
@@ -28,9 +31,12 @@ public class MainActivity extends AppCompatActivity  implements NavigationView.O
     static FragmentManager fragmentManager;
     static FragmentTransaction fragmentTransaction;
     Toolbar toolbar;
-    static LinearLayout containerLayout, homeLayout;
+    static LinearLayout containerLayout;
     public static  MenuItem searchItem;
     static SearchView searchView;
+
+    boolean searching=false;
+    boolean backFromUser=false;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -42,7 +48,6 @@ public class MainActivity extends AppCompatActivity  implements NavigationView.O
         staticContext = MainActivity.this;
 
         containerLayout = (LinearLayout) findViewById(R.id.main_container);
-        homeLayout = (LinearLayout) findViewById(R.id.main_home);
         fragmentManager = getSupportFragmentManager();
 
         DrawerLayout drawer = (DrawerLayout) findViewById(R.id.drawer_layout);
@@ -55,28 +60,7 @@ public class MainActivity extends AppCompatActivity  implements NavigationView.O
         navigationView.setNavigationItemSelectedListener(this);
         navigationView.getMenu().getItem(0).setChecked(true);
 
-    }
 
-    @Override
-    public void onBackPressed() {
-        Log.wtf("onBackPressed","backstack count is  = "+fragmentManager.getBackStackEntryCount());
-        DrawerLayout drawer = (DrawerLayout) findViewById(R.id.drawer_layout);
-        if (drawer.isDrawerOpen(GravityCompat.START)) {
-            drawer.closeDrawer(GravityCompat.START);
-        } else {
-            if (!searchView.isIconified()) {
-                searchView.setIconified(true);
-                super.onBackPressed();
-            } else {
-                if(fragmentManager.getBackStackEntryCount() == 0 && !homeLayout.isShown()){
-                    clearBackstack();
-                    navigationView.getMenu().getItem(0).setChecked(true);
-                    getSupportActionBar().setTitle("Home");
-                }else {
-                    super.onBackPressed();
-                }
-            }
-        }
     }
 
     @SuppressWarnings("StatementWithEmptyBody")
@@ -84,28 +68,22 @@ public class MainActivity extends AppCompatActivity  implements NavigationView.O
     public boolean onNavigationItemSelected(MenuItem item) {
         // Handle navigation view item clicks here.
         int id = item.getItemId();
-
         switch (id){
             case R.id.nav_home:
                 clearBackstack();
                 getSupportActionBar().setTitle("Home");
                 navigationView.getMenu().getItem(0).setChecked(true);
-                homeLayout.setVisibility(View.VISIBLE);
-                containerLayout.setVisibility(View.INVISIBLE);
+                changeBackstack(true,new Fragment_home(),"Home");
                 break;
             case R.id.nav_categories:
                 getSupportActionBar().setTitle("Categories");
                 navigationView.getMenu().getItem(1).setChecked(true);
-                homeLayout.setVisibility(View.INVISIBLE);
-                changeBackstack(false,new Fragment_Categories(), "Categories");
-                containerLayout.setVisibility(View.VISIBLE);
+                changeBackstack(true,new Fragment_Categories(), "Categories");
                 break;
             case R.id.nav_developers:
                 navigationView.getMenu().getItem(2).setChecked(true);
                 getSupportActionBar().setTitle("Developers");
-                homeLayout.setVisibility(View.INVISIBLE);
-                changeBackstack(false,new Fragment_Developers(), "Developers");
-                containerLayout.setVisibility(View.VISIBLE);
+                changeBackstack(true,new Fragment_Developers(), "Developers");
                 break;
         }
         DrawerLayout drawer = (DrawerLayout) findViewById(R.id.drawer_layout);
@@ -115,30 +93,47 @@ public class MainActivity extends AppCompatActivity  implements NavigationView.O
 
     public static void changeBackstack(boolean addToBackStack, Fragment fragment,String name){
         try{
-            homeLayout.setVisibility(View.INVISIBLE);
-            containerLayout.setVisibility(View.VISIBLE);
-
             if (!searchView.isIconified() && !name.equalsIgnoreCase("Search")) {
                 searchView.setIconified(true);
             }
-
             fragmentTransaction = fragmentManager.beginTransaction();
-            fragmentTransaction.replace(R.id.main_container,fragment);
             if(addToBackStack){
+                Log.wtf("changeBackstack","Adding to backstack");
+                fragmentTransaction.replace(R.id.main_container,fragment);
                 fragmentTransaction.addToBackStack(name);
+            }else{
+                Log.wtf("changeBackstack","Replacing backstack");
+                fragmentTransaction.replace(R.id.main_container,fragment);
             }
             fragmentTransaction.commit();
+            Log.wtf("changeBackstack","Backstack count: "+fragmentManager.getBackStackEntryCount());
         }catch (Exception ee){
             Log.wtf("addToBackStack","ERROR: "+ee.getMessage());
         }
     }
 
-    protected static void clearBackstack(){
-        for(int i = 0; i < fragmentManager.getBackStackEntryCount(); ++i) {
-            fragmentManager.popBackStack();
+    @Override
+    public void onBackPressed() {
+        Log.wtf("onBackPressed","backstack count is  = "+fragmentManager.getBackStackEntryCount());
+        DrawerLayout drawer = (DrawerLayout) findViewById(R.id.drawer_layout);
+        if (drawer.isDrawerOpen(GravityCompat.START)) {
+            Log.wtf("onBackPressed","Drawer is opened");
+            drawer.closeDrawer(GravityCompat.START);
+        } else {
+            if (!searchView.isIconified()) {
+                Log.wtf("onBackPressed","search is not iconfied");
+                backFromUser=true;
+                searchView.setIconified(true);
+                super.onBackPressed();
+            } else {
+                Log.wtf("onBackPressed","search is  iconfied");
+                if(fragmentManager.getBackStackEntryCount()==1){
+                finish();
+                }else{
+                    super.onBackPressed();
+                }
+            }
         }
-        containerLayout.setVisibility(View.INVISIBLE);
-        homeLayout.setVisibility(View.VISIBLE);
     }
 
     @Override
@@ -146,18 +141,60 @@ public class MainActivity extends AppCompatActivity  implements NavigationView.O
         getMenuInflater().inflate(R.menu.main,menu);
         searchItem = menu.findItem(R.id.search);
         searchView = (SearchView) searchItem.getActionView();
+
+        changeBackstack(true,new Fragment_home(),"Home");
+        searchLayoutFunction();
+        return true;
+    }
+
+    //SEARCH LAYOUT
+    protected void searchLayoutFunction(){
+        Fragment fragmentSearch = new Fragment_Search();
+      //  final LinearLayout loadinglayout = (LinearLayout) fragmentSearch.getActivity().findViewById(R.id.search_loadinglayout);
+      //  final ProgressBar progressBar = (ProgressBar) fragmentSearch.getActivity().findViewById(R.id.search_loading_progress);
+      //  final TextView textViewMessage = (TextView) fragmentSearch.getActivity().findViewById(R.id.search_loading_text);
+      //  ListView listView = (ListView) fragmentSearch.getActivity().findViewById(R.id.search_listview);
+
         searchView.setOnSearchClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 Log.wtf("searchView","Search is clicked");
+                searching=true;
                 changeBackstack(true,new Fragment_Search(),"Search");
             }
         });
+        searchView.setOnCloseListener(new SearchView.OnCloseListener() {
+            @Override
+            public boolean onClose() {
+                Log.wtf("SearchView","onClose");
+                //fragmentManager.popBackStack();
+                if(searching){
+                    searching=false;
+                    if(!backFromUser){
+                        Log.wtf("searchView","Closed from X");
+                        onBackPressed();
+                        backFromUser=false;
+                    }else{
+                        Log.wtf("searchView","Closed from back press");
+                        Log.wtf("searchView","Backstack Count: "+fragmentManager.getBackStackEntryCount());
+                       if(fragmentManager.getBackStackEntryCount()>0) {
+                           Log.wtf("searchView","Count>0, popping");
+                           fragmentManager.popBackStack();
+                       }
+                    }
+                }
+                return false;
+            }
+        });
+
         searchView.setOnQueryTextListener(new SearchView.OnQueryTextListener() {
             @Override
             public boolean onQueryTextSubmit(String query) {
                 Log.wtf("searchView","onQueryTextSubmit");
-
+              //  loadinglayout.setVisibility(View.VISIBLE);
+              //  loadinglayout.bringToFront();
+              //  progressBar.setVisibility(View.VISIBLE);
+              //  textViewMessage.setText("Searching");
                 return false;
             }
             @Override
@@ -167,6 +204,12 @@ public class MainActivity extends AppCompatActivity  implements NavigationView.O
             }
         });
 
-        return true;
     }
+
+    protected static void clearBackstack(){
+        for(int i = 0; i < fragmentManager.getBackStackEntryCount(); ++i) {
+            fragmentManager.popBackStack();
+        }
+    }
+
 }

@@ -23,6 +23,7 @@
     </LinearLayout>
     <!--MESSAGE LAYOUT-->
     <LinearLayout
+        android:background="#eceaea"
         android:id="@+id/messagelayout"
         android:visibility="invisible"
         android:orientation="vertical"

@@ -81,13 +81,6 @@ public class Fragment_Recipe_Opened extends Fragment{
         MainActivity.searchItem.setVisible(false);
     }
 
-    @Override
-    public void onDetach() {
-        super.onDetach();
-        Log.wtf("Opened Fragment","OnDetach");
-        MainActivity.searchItem.setVisible(true);
-    }
-
     protected void ratingbarListener(){
         ratingBar.setOnRatingBarChangeListener(new RatingBar.OnRatingBarChangeListener() {
             @Override
@@ -243,8 +236,11 @@ public class Fragment_Recipe_Opened extends Fragment{
     public void onAttach(Context context) {
         super.onAttach(context);
         this.context = context;
-
     }
 
-
+    @Override
+    public void onDestroy() {
+        super.onDestroy();
+        MainActivity.searchItem.setVisible(true);
+    }
 }
