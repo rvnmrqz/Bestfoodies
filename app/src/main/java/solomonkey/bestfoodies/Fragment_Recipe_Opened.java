@@ -4,6 +4,8 @@ import android.app.Dialog;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
+import android.content.res.Resources;
+import android.graphics.Rect;
 import android.media.Rating;
 import android.net.ConnectivityManager;
 import android.net.NetworkInfo;
@@ -12,7 +14,11 @@ import android.support.annotation.Nullable;
 import android.support.design.widget.Snackbar;
 import android.support.v4.app.Fragment;
 import android.support.v7.app.AppCompatActivity;
+import android.support.v7.widget.DefaultItemAnimator;
+import android.support.v7.widget.GridLayoutManager;
+import android.support.v7.widget.RecyclerView;
 import android.util.Log;
+import android.util.TypedValue;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -20,6 +26,7 @@ import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
+import android.widget.ProgressBar;
 import android.widget.RatingBar;
 import android.widget.RelativeLayout;
 import android.widget.ScrollView;
@@ -48,7 +55,9 @@ import org.json.JSONArray;
 import org.json.JSONObject;
 
 
+import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 
@@ -80,6 +89,17 @@ public class Fragment_Recipe_Opened extends Fragment{
     TextView txtReviewRecipe;
     int review_value = 0;
 
+    LinearLayout layout_writereview;
+    LinearLayout layout_reviews;
+    LinearLayout layout_review_message;
+    ProgressBar resultMessagelayout_progress;
+    TextView resultMessagelayout_text;
+
+    private RecyclerView recyclerView;
+    private ReviewAdapter adapter;
+    private List<Reviews> reviewsList;
+
+
 
     @Override
     public void onViewCreated(View view, @Nullable Bundle savedInstanceState) {
@@ -102,14 +122,14 @@ public class Fragment_Recipe_Opened extends Fragment{
         txtReviewRecipe.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                showReviewDialog(true);
+                showReviewDialog();
             }
         });
 
         txt_recipe_reviewcount.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                showReviewDialog(false);
+               loadReviews();
             }
         });
 
@@ -242,25 +262,20 @@ public class Fragment_Recipe_Opened extends Fragment{
     }
 
 
-    private void showReviewDialog(boolean writeReviewMode){
+    private void showReviewDialog(){
         LayoutInflater inflater = getActivity().getLayoutInflater();
         review_value = 5;
         View view =  inflater.inflate(R.layout.fragment_review, null);
-        LinearLayout layout_writereview = (LinearLayout) view.findViewById(R.id.layout_writereview);
-        ScrollView layout_reviews = (ScrollView) view.findViewById(R.id.layout_reviews);
+        layout_writereview = (LinearLayout) view.findViewById(R.id.layout_writereview);
+        layout_reviews = (LinearLayout) view.findViewById(R.id.resultlayout);
         RatingBar review_ratingbar = (RatingBar) view.findViewById(R.id.review_ratingbar);
         final TextView txt_review_ratingValue = (TextView) view.findViewById(R.id.review_ratingValue);
         final EditText txt_review_title = (EditText) view.findViewById(R.id.edittxt_reviewTitle);
         final EditText txt_review_description = (EditText) view.findViewById(R.id.edittxt_reviewDescription);
         Button btn_submit = (Button) view.findViewById(R.id.review_submitButton);
 
-        if(writeReviewMode){
-            layout_writereview.setVisibility(View.VISIBLE);
-            layout_reviews.setVisibility(View.GONE);
-        }else{
-            layout_reviews.setVisibility(View.VISIBLE);
-            layout_writereview.setVisibility(View.GONE);
-        }
+        layout_writereview.setVisibility(View.VISIBLE);
+        layout_reviews.setVisibility(View.GONE);
 
         review_ratingbar.setOnRatingBarChangeListener(new RatingBar.OnRatingBarChangeListener() {
             @Override
@@ -350,6 +365,158 @@ public class Fragment_Recipe_Opened extends Fragment{
         }
     }
 
+    private void loadReviews(){
+        LayoutInflater inflater = getActivity().getLayoutInflater();
+        View view =  inflater.inflate(R.layout.fragment_review, null);
+
+        resultMessagelayout_progress = (ProgressBar) view.findViewById(R.id.resultMessagelayout_progress);
+        resultMessagelayout_text = (TextView) view.findViewById(R.id.resultMessagelayout_text);
+        layout_review_message = (LinearLayout) view.findViewById(R.id.resultMessagelayout);
+        layout_writereview = (LinearLayout) view.findViewById(R.id.layout_writereview);
+        layout_reviews = (LinearLayout) view.findViewById(R.id.resultlayout);
+        layout_writereview.setVisibility(View.GONE);
+        layout_reviews.setVisibility(View.VISIBLE);
+
+        recyclerView = (RecyclerView) view.findViewById(R.id.recyclerView);
+        reviewsList = new ArrayList<>();
+        adapter = new ReviewAdapter(view.getContext(), reviewsList);
+
+        RecyclerView.LayoutManager mLayoutManager = new GridLayoutManager(context,1);
+        recyclerView.setLayoutManager(mLayoutManager);
+        recyclerView.addItemDecoration(new GridSpacingItemDecoration(1,dpToPx(5),true));
+        recyclerView.setItemAnimator(new DefaultItemAnimator());
+        recyclerView.setAdapter(adapter);
+
+        if(!isNetworkAvailable()){
+            showSnackbar();
+        }else{
+            reviewMessageDisplay(true,true,"Loading");
+            final String server_url = TempHolder.HOST_ADDRESS+"/get_data.php";
+            RequestQueue requestQueue = Volley.newRequestQueue(context);
+            StringRequest request = new StringRequest(Request.Method.POST, server_url,
+                    new Response.Listener<String>() {
+                        @Override
+                        public void onResponse(String response) {
+                            if(response!=null){
+                                try{
+                                    Log.wtf("onResponse","Response:" +response);
+                                    //clear the list in the UI
+                                    int rating;
+                                    String datetime,title,description;
+                                    JSONObject object = new JSONObject(response);
+                                    JSONArray Jarray  = object.getJSONArray("mydata");
+                                    Reviews reviews;
+                                    if(Jarray.length()>0) {
+                                        reviewMessageDisplay(false,false,null);
+                                        Log.wtf("onResponse", "Result count: " + Jarray.length());
+                                        for (int i = 0; i < Jarray.length(); i++) {
+                                            JSONObject Jasonobject = Jarray.getJSONObject(i);
+                                            datetime = Jasonobject.getString("datetime");
+                                            title = Jasonobject.getString("title");
+                                            description = Jasonobject.getString("description");
+                                            rating = Jasonobject.getInt("rating");
+                                            reviews = new Reviews(datetime, title, description, rating);
+                                            reviewsList.add(reviews);
+                                            adapter.notifyDataSetChanged();
+                                        }
+
+                                    }else reviewMessageDisplay(true,false,"No Reviews");
+                                }catch (Exception ee)
+                                {
+                                    reviewMessageDisplay(true,false,"An error occured while loading");
+                                    Log.wtf("loadRecipe ERROR (onResponse)",ee.getMessage());
+                                }
+                            }
+                        }
+                    },
+                    new Response.ErrorListener() {
+                        @Override
+                        public void onErrorResponse(VolleyError volleyError) {
+                            String message = getVolleyError(volleyError);
+                            reviewMessageDisplay(true,false,message);
+                            Log.wtf("loadRecipe: onErrorResponse","Volley Error \n"+message);
+                        }
+                    }){
+                @Override
+                protected Map<String, String> getParams() throws AuthFailureError {
+                    Map<String,String> params = new HashMap<>();
+                    String query = "SELECT * FROM tbl_ratings WHERE recipe_id = "+TempHolder.selectedRecipeID+";";
+                    params.put("qry",query);
+                    Log.wtf("loadRecipe","Map<> Query: "+query);
+                    return params;
+                }
+            };
+            int socketTimeout = TempHolder.TIME_OUT;
+            RetryPolicy policy = new DefaultRetryPolicy(socketTimeout,
+                    DefaultRetryPolicy.DEFAULT_MAX_RETRIES,
+                    DefaultRetryPolicy.DEFAULT_BACKOFF_MULT);
+            request.setRetryPolicy(policy);
+            request.setShouldCache(false);
+            requestQueue.add(request);
+
+            builder = new android.app.AlertDialog.Builder(context);
+            builder.setView(view);
+            dialog = builder.show();
+        }
+    }
+
+    protected void reviewMessageDisplay(boolean showMessageLayout,boolean showProgressBar, String message){
+        if(showMessageLayout){
+            recyclerView.setVisibility(View.GONE);
+            layout_review_message.setVisibility(View.VISIBLE);
+            if(showProgressBar){
+                resultMessagelayout_progress.setVisibility(View.VISIBLE);
+            }else{
+                resultMessagelayout_progress.setVisibility(View.GONE);
+            }
+            resultMessagelayout_text.setText(message);
+        }else{
+            recyclerView.setVisibility(View.VISIBLE);
+            layout_review_message.setVisibility(View.GONE);
+        }
+
+    }
+
+
+    //CARDS PLACEMENT
+    public class GridSpacingItemDecoration extends RecyclerView.ItemDecoration {
+
+        private int spanCount;
+        private int spacing;
+        private boolean includeEdge;
+
+        public GridSpacingItemDecoration(int spanCount, int spacing, boolean includeEdge) {
+            this.spanCount = spanCount;
+            this.spacing = spacing;
+            this.includeEdge = includeEdge;
+        }
+
+        @Override
+        public void getItemOffsets(Rect outRect, View view, RecyclerView parent, RecyclerView.State state) {
+            int position = parent.getChildAdapterPosition(view); // item position
+            int column = position % spanCount; // item column
+
+            if (includeEdge) {
+                outRect.left = spacing - column * spacing / spanCount; // spacing - column * ((1f / spanCount) * spacing)
+                outRect.right = (column + 1) * spacing / spanCount; // (column + 1) * ((1f / spanCount) * spacing)
+
+                if (position < spanCount) { // top edge
+                    outRect.top = spacing;
+                }
+                outRect.bottom = spacing; // item bottom
+            } else {
+                outRect.left = column * spacing / spanCount; // column * ((1f / spanCount) * spacing)
+                outRect.right = spacing - (column + 1) * spacing / spanCount; // spacing - (column + 1) * ((1f /    spanCount) * spacing)
+                if (position >= spanCount) {
+                    outRect.top = spacing; // item top
+                }
+            }
+        }
+    }
+    private int dpToPx(int dp) {
+        Resources r = getResources();
+        return Math.round(TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_DIP, dp, r.getDisplayMetrics()));
+    }
 
 
     //screen transitions
