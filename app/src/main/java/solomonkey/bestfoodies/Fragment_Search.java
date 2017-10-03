@@ -125,7 +125,8 @@ public class Fragment_Search extends Fragment {
                                 try {
                                     Log.wtf("onResponse", "Response:" + response);
                                     //clear the list in the UI
-                                    String recipe_id, recipe_name, ingredients, procedures, rating, reviews, thumbnailfile, videolink;
+                                    double rating;
+                                    String recipe_id, recipe_name, ingredients, procedures,  reviews, thumbnailfile, videolink;
                                     JSONObject object = new JSONObject(response);
                                     JSONArray Jarray = object.getJSONArray("mydata");
                                     Recipes recipes;
@@ -139,7 +140,7 @@ public class Fragment_Search extends Fragment {
                                             recipe_name = Jasonobject.getString("name");
                                             ingredients = Jasonobject.getString("ingredients");
                                             procedures = Jasonobject.getString("procedures");
-                                            rating = Jasonobject.getString("rating");
+                                            rating = Jasonobject.getDouble("rating");
                                             reviews = Jasonobject.getString("reviews");
                                             thumbnailfile = TempHolder.HOST_ADDRESS + "/images/" + Jasonobject.getString("imagefilename");
                                             videolink = Jasonobject.getString("videolink");

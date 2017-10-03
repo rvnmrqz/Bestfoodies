@@ -1,25 +1,25 @@
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
-    android:layout_height="match_parent"
+    android:layout_height="wrap_content"
     android:orientation="vertical"
     android:background="@color/darkbackgroundColor"
+    android:padding="6dp"
     tools:context="solomonkey.bestfoodies.Fragment_Review">
 
     <LinearLayout
-        android:background="@drawable/rounded_shape"
-        android:layout_margin="8dp"
-        android:padding="8dp"
+        android:visibility="gone"
         android:id="@+id/layout_writereview"
+        android:padding="8dp"
+        android:background="@drawable/rounded_shape"
         android:layout_alignParentTop="true"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_weight="0.35"
         android:orientation="vertical">
         <TextView
+            android:text="Rate"
             android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:text="Rate" />
+            android:layout_height="wrap_content"/>
         <RelativeLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
@@ -29,11 +29,12 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:max="5"
+                android:rating="5"
                 android:numStars="5"
                 android:stepSize="1.0"/>
             <TextView
                 android:id="@+id/review_ratingValue"
-                android:text="5 stars"
+                android:text="5"
                 android:layout_marginLeft="8dp"
                 android:layout_toRightOf="@id/review_ratingbar"
                 android:layout_centerVertical="true"
@@ -46,6 +47,7 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content" />
         <EditText
+            android:id="@+id/edittxt_reviewTitle"
             android:maxLength="20"
             android:maxLines="1"
             android:lines="1"
@@ -56,11 +58,12 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content" />
         <EditText
-            android:maxLength="20"
-            android:maxLines="1"
-            android:lines="2"
+            android:id="@+id/edittxt_reviewDescription"
             android:layout_width="match_parent"
-            android:layout_height="wrap_content" />
+            android:layout_height="wrap_content"
+            android:lines="2"
+            android:maxLength="20"
+            android:maxLines="1" />
         <Button
             android:id="@+id/review_submitButton"
             android:layout_gravity="end"
@@ -75,9 +78,9 @@
     </LinearLayout>
 
     <ScrollView
+        android:id="@+id/layout_reviews"
+        android:visibility="gone"
         android:background="@color/colorWhite"
-        android:layout_margin="8dp"
-        android:layout_below="@+id/layout_writereview"
         android:layout_alignParentBottom="true"
         android:fillViewport="true"
         android:layout_width="match_parent"
@@ -90,7 +93,6 @@
                 android:text="Other Reviews Here"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content" />
-
         </LinearLayout>
     </ScrollView>
 

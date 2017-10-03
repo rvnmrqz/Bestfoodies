@@ -1,8 +1,15 @@
 package solomonkey.bestfoodies;
 
+import android.app.Dialog;
 import android.content.Context;
+import android.content.DialogInterface;
+import android.content.Intent;
+import android.media.Rating;
+import android.net.ConnectivityManager;
+import android.net.NetworkInfo;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
+import android.support.design.widget.Snackbar;
 import android.support.v4.app.Fragment;
 import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
@@ -10,11 +17,15 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
+import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.RatingBar;
+import android.widget.RelativeLayout;
 import android.widget.ScrollView;
 import android.widget.TextView;
+import android.widget.Toast;
+
 import com.android.volley.AuthFailureError;
 import com.android.volley.DefaultRetryPolicy;
 import com.android.volley.NetworkError;
@@ -35,7 +46,7 @@ import com.google.android.youtube.player.YouTubePlayerSupportFragment;
 import com.squareup.picasso.Picasso;
 import org.json.JSONArray;
 import org.json.JSONObject;
-import org.w3c.dom.Text;
+
 
 import java.util.HashMap;
 import java.util.Map;
@@ -64,7 +75,11 @@ public class Fragment_Recipe_Opened extends Fragment{
     String link;
 
     //rating
+    Dialog dialog;
+    android.app.AlertDialog.Builder builder;
     TextView txtReviewRecipe;
+    int review_value = 0;
+
 
     @Override
     public void onViewCreated(View view, @Nullable Bundle savedInstanceState) {
@@ -87,13 +102,19 @@ public class Fragment_Recipe_Opened extends Fragment{
         txtReviewRecipe.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                MainActivity.changeBackstack(true,new Fragment_Review(),"RecipeReview");
+                showReviewDialog(true);
+            }
+        });
+
+        txt_recipe_reviewcount.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                showReviewDialog(false);
             }
         });
 
         loadRecipe();
         ratingbarListener();
-
         MainActivity.searchItem.setVisible(false);
     }
 
@@ -105,7 +126,6 @@ public class Fragment_Recipe_Opened extends Fragment{
             }
         });
     }
-
     protected void loadRecipe(){
         showLoadingLayout();
         Log.wtf("loadRecipe","loadRecipe called");
@@ -221,6 +241,117 @@ public class Fragment_Recipe_Opened extends Fragment{
         }
     }
 
+
+    private void showReviewDialog(boolean writeReviewMode){
+        LayoutInflater inflater = getActivity().getLayoutInflater();
+        review_value = 5;
+        View view =  inflater.inflate(R.layout.fragment_review, null);
+        LinearLayout layout_writereview = (LinearLayout) view.findViewById(R.id.layout_writereview);
+        ScrollView layout_reviews = (ScrollView) view.findViewById(R.id.layout_reviews);
+        RatingBar review_ratingbar = (RatingBar) view.findViewById(R.id.review_ratingbar);
+        final TextView txt_review_ratingValue = (TextView) view.findViewById(R.id.review_ratingValue);
+        final EditText txt_review_title = (EditText) view.findViewById(R.id.edittxt_reviewTitle);
+        final EditText txt_review_description = (EditText) view.findViewById(R.id.edittxt_reviewDescription);
+        Button btn_submit = (Button) view.findViewById(R.id.review_submitButton);
+
+        if(writeReviewMode){
+            layout_writereview.setVisibility(View.VISIBLE);
+            layout_reviews.setVisibility(View.GONE);
+        }else{
+            layout_reviews.setVisibility(View.VISIBLE);
+            layout_writereview.setVisibility(View.GONE);
+        }
+
+        review_ratingbar.setOnRatingBarChangeListener(new RatingBar.OnRatingBarChangeListener() {
+            @Override
+            public void onRatingChanged(RatingBar ratingBar, float rating, boolean fromUser) {
+                review_value = (int) rating;
+                Log.wtf("RatingChanged",rating+"");
+                txt_review_ratingValue.setText(review_value+"");
+            }
+        });
+
+        btn_submit.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Log.wtf("btn_submit","submit clicked");
+                String title = txt_review_title.getText().toString();
+                String desc = txt_review_description.getText().toString();
+                if(title.trim().length()==0){
+                    Toast.makeText(context, "Review title is required", Toast.LENGTH_SHORT).show();
+                    return;
+                }
+                if(desc.trim().length()==0){
+                    Toast.makeText(context, "Review description is required", Toast.LENGTH_SHORT).show();
+                    return;
+                }
+                if(title.length()!=0 && desc.length()!=0){
+                    //submit
+                    Toast.makeText(context, "   Submitting...", Toast.LENGTH_SHORT).show();
+                    sendReview(TempHolder.selectedRecipeID,review_value,title,desc);
+                }
+            }
+        });
+        builder = new android.app.AlertDialog.Builder(context);
+        builder.setView(view);
+        dialog = builder.show();
+    }
+    protected void sendReview(final String recipe_id, final int rating, final String title, final String desc){
+        if(!isNetworkAvailable()){
+            showSnackbar();
+        }else{
+            final String server_url = TempHolder.HOST_ADDRESS+"/do_query.php";
+            RequestQueue requestQueue = Volley.newRequestQueue(context);
+            StringRequest request = new StringRequest(Request.Method.POST, server_url,
+                    new Response.Listener<String>() {
+                        @Override
+                        public void onResponse(String response) {
+                            if(response!=null){
+                                try{
+                                    Log.wtf("onResponse","Response:" +response);
+                                    if(response.trim().equals("Process Successful")) {
+                                        if (dialog != null) {
+                                            dialog.hide();
+                                            dialog.dismiss();
+                                        }
+                                        loadRecipe();
+                                    }
+                                    Toast.makeText(context, response.trim(), Toast.LENGTH_SHORT).show();
+                                }catch (Exception ee)
+                                {
+                                    Log.wtf("loadRecipe ERROR (onResponse)",ee.getMessage());
+                                }
+                            }
+                        }
+                    },
+                    new Response.ErrorListener() {
+                        @Override
+                        public void onErrorResponse(VolleyError volleyError) {
+                            String message = getVolleyError(volleyError);
+                            Log.wtf("loadRecipe: onErrorResponse","Volley Error \n"+message);
+                        }
+                    }){
+                @Override
+                protected Map<String, String> getParams() throws AuthFailureError {
+                    Map<String,String> params = new HashMap<>();
+                    String query = "INSERT INTO tbl_ratings(recipe_id,datetime,title,description,rating) VALUES("+recipe_id+",NOW(),'"+title+"','"+desc+"',"+rating+");";
+                    params.put("query",query);
+                    Log.wtf("loadRecipe","Map<> Query: "+query);
+                    return params;
+                }
+            };
+            int socketTimeout = TempHolder.TIME_OUT;
+            RetryPolicy policy = new DefaultRetryPolicy(socketTimeout,
+                    DefaultRetryPolicy.DEFAULT_MAX_RETRIES,
+                    DefaultRetryPolicy.DEFAULT_BACKOFF_MULT);
+            request.setRetryPolicy(policy);
+            request.setShouldCache(false);
+            requestQueue.add(request);
+        }
+    }
+
+
+
     //screen transitions
     protected void showLoadingLayout(){
         layout_recipe.setVisibility(View.INVISIBLE);
@@ -265,5 +396,23 @@ public class Fragment_Recipe_Opened extends Fragment{
     public void onResume() {
         super.onResume();
         ((AppCompatActivity)getActivity()).getSupportActionBar().setTitle("Recipe");
+    }
+
+    protected void showSnackbar(){
+        RelativeLayout parent = (RelativeLayout) getActivity().findViewById(R.id.parentPanel);
+        Snackbar.make(parent, "You're offline", Snackbar.LENGTH_LONG)
+                .setAction("Go online", new View.OnClickListener() {
+                    @Override
+                    public void onClick(View view) {
+                        startActivity(new Intent(android.provider.Settings.ACTION_WIFI_SETTINGS));
+                    }
+                })
+                .setActionTextColor(getResources().getColor(R.color.colorPrimary))
+                .show();
+    }
+    private boolean isNetworkAvailable() {
+        ConnectivityManager connectivityManager = (ConnectivityManager) context.getSystemService(Context.CONNECTIVITY_SERVICE);
+        NetworkInfo activeNetworkInfo = connectivityManager.getActiveNetworkInfo();
+        return activeNetworkInfo != null && activeNetworkInfo.isConnected();
     }
 }

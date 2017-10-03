@@ -115,7 +115,7 @@ public class Fragment_Recipe_List extends Fragment {
 
     protected void loadRecipe(){
         showloadingLayout();
-        Log.wtf("loadRecipe","loadRecipe called");
+        Log.wtf("loadRecipe List","loadRecipe called");
         if(!isNetworkAvailable()){
             showSnackbar();
             showMessage("No Internet Connection","Retry");
@@ -130,13 +130,12 @@ public class Fragment_Recipe_List extends Fragment {
                                 try{
                                     Log.wtf("onResponse","Response:" +response);
                                     //clear the list in the UI
-                                    String recipe_id,recipe_name,ingredients,procedures,rating,reviews,thumbnailfile,videolink;
+                                    double rating;
+                                    String recipe_id,recipe_name,ingredients,procedures,reviews,thumbnailfile,videolink;
                                     JSONObject object = new JSONObject(response);
                                     JSONArray Jarray  = object.getJSONArray("mydata");
                                     Recipes recipes;
-
                                     if(Jarray.length()>0) {
-
                                         Log.wtf("onResponse","Result count: "+Jarray.length());
                                         for (int i = 0; i < Jarray.length(); i++) {
                                             JSONObject Jasonobject = Jarray.getJSONObject(i);
@@ -144,14 +143,13 @@ public class Fragment_Recipe_List extends Fragment {
                                             recipe_name = Jasonobject.getString("name");
                                             ingredients = Jasonobject.getString("ingredients");
                                             procedures = Jasonobject.getString("procedures");
-                                            rating = Jasonobject.getString("rating");
+                                            rating = Jasonobject.getDouble("rating");
                                             reviews = Jasonobject.getString("reviews");
                                             thumbnailfile = TempHolder.HOST_ADDRESS+"/images/"+Jasonobject.getString("imagefilename");
                                             videolink = Jasonobject.getString("videolink");
                                             recipes = new Recipes(recipe_id,recipe_name,ingredients,procedures,rating,reviews,thumbnailfile,videolink);
                                             recipesList.add(recipes);
                                             adapter.notifyDataSetChanged();
-                                           // Log.wtf("Response","recipe_id:"+recipe_id+"\nrecipe_name:" + recipe_name + "\ningredients:" + ingredients + "\nprocedures:" + procedures + "\nrating:" + rating + "\nthumbnailLink:" + thumbnailLink + "\nvideolink:" + videolink + "\n");
                                         }
                                         showResults();
                                     }else{

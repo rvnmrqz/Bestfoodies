@@ -9,13 +9,13 @@ public class Recipes {
     private String recipe_name;
     private String ingredients;
     private String procedures;
-    private String rating;
+    private double rating;
     private String reviews;
     private String thumbnailLink;
     private String videoLink;
 
 
-    public Recipes(String recipe_id, String recipe_name, String ingredients, String procedures, String rating, String reviews, String thumbnailLink, String videoLink) {
+    public Recipes(String recipe_id, String recipe_name, String ingredients, String procedures, double rating, String reviews, String thumbnailLink, String videoLink) {
         this.recipe_id = recipe_id;
         this.recipe_name = recipe_name;
         this.ingredients = ingredients;
@@ -75,11 +75,11 @@ public class Recipes {
         this.procedures = procedures;
     }
 
-    public String getRating() {
+    public double getRating() {
         return rating;
     }
 
-    public void setRating(String rating) {
+    public void setRating(int rating) {
         this.rating = rating;
     }
 
