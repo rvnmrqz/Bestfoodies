@@ -208,7 +208,6 @@ public class Fragment_Recipe_Opened extends Fragment{
                     youTubePlayer.setShowFullscreenButton(false);
                     youTubePlayer.loadVideo(link);
                 }
-
                 @Override
                 public void onInitializationFailure(YouTubePlayer.Provider provider, YouTubeInitializationResult youTubeInitializationResult) {
 
