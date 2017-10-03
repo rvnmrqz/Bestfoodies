@@ -2,15 +2,43 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:gravity="center"
-    android:padding="30dp"
     android:background="#fff"
+    android:padding="16dp"
+    android:orientation="vertical"
+    android:gravity="center"
     tools:context="solomonkey.bestfoodies.Fragment_home">
 
-    <LinearLayout
-        android:background="@drawable/home_img"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content">
 
-    </LinearLayout>
+            <ImageView
+                android:src="@drawable/logo"
+                android:scaleType="centerCrop"
+                android:layout_gravity="center_horizontal"
+                android:layout_width="200dp"
+                android:layout_height="200dp" />
+            <TextView
+                android:textColor="#bb0000"
+                android:text="Welcome to Bestfoodies"
+                android:textStyle="bold"
+                android:textSize="28sp"
+                android:textAlignment="center"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content" />
+            <TextView
+                android:padding="16dp"
+                android:textAlignment="center"
+                android:text="@string/home_intro"
+                android:textSize="18sp"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content" />
+    <TextView
+        android:id="@+id/bouncingText"
+        android:textColor="#bb0000"
+        android:layout_marginTop="16dp"
+        android:text="HAPPY COOKING!"
+        android:textStyle="bold"
+        android:textSize="24sp"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content" />
+
+
 </LinearLayout>

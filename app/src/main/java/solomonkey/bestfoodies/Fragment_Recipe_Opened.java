@@ -35,14 +35,16 @@ import com.google.android.youtube.player.YouTubePlayerSupportFragment;
 import com.squareup.picasso.Picasso;
 import org.json.JSONArray;
 import org.json.JSONObject;
+import org.w3c.dom.Text;
+
 import java.util.HashMap;
 import java.util.Map;
 
 
 public class Fragment_Recipe_Opened extends Fragment{
 
-   Context context;
-
+    Context context;
+    public static Context staticContext;
     //layouts
     ScrollView layout_recipe;
     LinearLayout layout_loading,layout_message;
@@ -54,11 +56,15 @@ public class Fragment_Recipe_Opened extends Fragment{
     //recipe layout views
     YouTubePlayerSupportFragment youTubePlayerSupportFragment;
     YouTubePlayer.OnInitializedListener onInitializedListener;
+
     //recipe
     TextView txt_RecipeName,txt_recipe_ingredients,txt_recipe_procedure,txt_recipe_reviewcount;
     ImageView img_recipe_finalimage;
     RatingBar ratingBar;
     String link;
+
+    //rating
+    TextView txtReviewRecipe;
 
     @Override
     public void onViewCreated(View view, @Nullable Bundle savedInstanceState) {
@@ -75,7 +81,16 @@ public class Fragment_Recipe_Opened extends Fragment{
         txt_recipe_reviewcount = (TextView) getActivity().findViewById(R.id.txt_recipe_reviewcount);
         img_recipe_finalimage = (ImageView) getActivity().findViewById(R.id.img_recipe_finalimage);
         ratingBar = (RatingBar) getActivity().findViewById(R.id.ratingbar);
+        txtReviewRecipe = (TextView) getActivity().findViewById(R.id.txtWrite_review);
         youTubePlayerSupportFragment = (YouTubePlayerSupportFragment) getChildFragmentManager().findFragmentById(R.id.youtube_fragment);
+
+        txtReviewRecipe.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                MainActivity.changeBackstack(true,new Fragment_Review(),"RecipeReview");
+            }
+        });
+
         loadRecipe();
         ratingbarListener();
 
@@ -190,6 +205,7 @@ public class Fragment_Recipe_Opened extends Fragment{
             onInitializedListener = new YouTubePlayer.OnInitializedListener() {
                 @Override
                 public void onInitializationSuccess(YouTubePlayer.Provider provider, YouTubePlayer youTubePlayer, boolean b) {
+                    youTubePlayer.setShowFullscreenButton(false);
                     youTubePlayer.loadVideo(link);
                 }
 
@@ -236,6 +252,7 @@ public class Fragment_Recipe_Opened extends Fragment{
     @Override
     public void onAttach(Context context) {
         super.onAttach(context);
+        staticContext = context;
         this.context = context;
     }
 

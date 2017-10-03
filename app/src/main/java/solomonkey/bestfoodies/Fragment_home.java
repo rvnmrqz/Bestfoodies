@@ -9,10 +9,16 @@ import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.view.animation.Animation;
+import android.view.animation.AnimationUtils;
+import android.widget.ImageView;
+import android.widget.LinearLayout;
+import android.widget.TextView;
 
 public class Fragment_home extends Fragment {
 
     Context context;
+    TextView bouncingText;
 
     public Fragment_home() {
         // Required empty public constructor
@@ -32,6 +38,9 @@ public class Fragment_home extends Fragment {
     @Override
     public void onViewCreated(View view, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
+        bouncingText = (TextView) getActivity().findViewById(R.id.bouncingText);
+        //Animation shake = AnimationUtils.loadAnimation(context,R.anim.shake_anim);
+        //bouncingText.setAnimation(shake);
     }
 
     @Override

@@ -20,7 +20,6 @@ import android.view.MenuItem;
 import android.view.View;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
-import android.widget.Toast;
 
 
 public class MainActivity extends AppCompatActivity  implements NavigationView.OnNavigationItemSelectedListener {
@@ -115,19 +114,20 @@ public class MainActivity extends AppCompatActivity  implements NavigationView.O
     public void onBackPressed() {
         Log.wtf("onBackPressed","backstack count is  = "+fragmentManager.getBackStackEntryCount());
         DrawerLayout drawer = (DrawerLayout) findViewById(R.id.drawer_layout);
+
         if (drawer.isDrawerOpen(GravityCompat.START)) {
             Log.wtf("onBackPressed","Drawer is opened");
             drawer.closeDrawer(GravityCompat.START);
-        } else {
+        }
+        else {
             if (!searchView.isIconified()) {
                 Log.wtf("onBackPressed","search is not iconfied");
                 backFromUser=true;
                 super.onBackPressed();
                 searchView.setIconified(true);
-            } else {
-                Log.wtf("onBackPressed","search is iconfied");
-                Log.wtf("onBackPressed","Count= "+fragmentManager.getBackStackEntryCount()+" Home is shown: "+homeIsShown);
-
+            }
+            else
+            {
                 if(fragmentManager.getBackStackEntryCount()==0 && homeIsShown){
                     finish();
                 }
@@ -152,7 +152,7 @@ public class MainActivity extends AppCompatActivity  implements NavigationView.O
         return true;
     }
 
-    //SEARCH LAYOUT
+    //SEARCH LAYOUT FUNCTIONS & EVENTS
     protected void searchLayoutFunction(){
 
         searchView.setOnSearchClickListener(new View.OnClickListener() {

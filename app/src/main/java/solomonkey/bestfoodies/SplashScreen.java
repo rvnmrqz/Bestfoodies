@@ -1,6 +1,7 @@
 package solomonkey.bestfoodies;
 
 import android.content.Intent;
+import android.media.Image;
 import android.os.Handler;
 import android.support.annotation.NonNull;
 import android.support.transition.Transition;
@@ -11,6 +12,8 @@ import android.view.Window;
 import android.view.WindowManager;
 import android.view.animation.Animation;
 import android.view.animation.AnimationUtils;
+import android.widget.ImageView;
+import android.widget.LinearLayout;
 import android.widget.TextView;
 
 public class SplashScreen extends AppCompatActivity {
@@ -25,7 +28,9 @@ public class SplashScreen extends AppCompatActivity {
 
 
         Animation shake = AnimationUtils.loadAnimation(this,R.anim.shake_anim);
+        LinearLayout logolayout = (LinearLayout) findViewById(R.id.logoLayout);
         TextView title = (TextView) findViewById(R.id.title);
+        ImageView logo = (ImageView) findViewById(R.id.logo);
         title.setAnimation(shake);
         shake.setAnimationListener(new Animation.AnimationListener() {
             @Override

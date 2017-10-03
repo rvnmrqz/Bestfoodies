@@ -8,11 +8,25 @@
     android:gravity="center"
     tools:context="solomonkey.bestfoodies.SplashScreen">
 
-    <TextView
-        android:id="@+id/title"
-        android:text="BestFoodies"
-        android:textStyle="bold"
-        android:textSize="42sp"
+    <LinearLayout
+        android:id="@+id/logoLayout"
+        android:orientation="vertical"
+        android:gravity="center"
         android:layout_width="wrap_content"
-        android:layout_height="wrap_content" />
+        android:layout_height="wrap_content">
+        <ImageView
+            android:id="@+id/logo"
+            android:src="@drawable/logo"
+            android:scaleType="centerCrop"
+            android:layout_width="200dp"
+            android:layout_height="200dp" />
+        <TextView
+            android:id="@+id/title"
+            android:text="Bestfoodies"
+            android:textStyle="bold"
+            android:textSize="42sp"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content" />
+    </LinearLayout>
+
 </LinearLayout>
