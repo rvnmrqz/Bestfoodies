@@ -18,7 +18,9 @@ import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
+import android.widget.ImageView;
 import android.widget.LinearLayout;
+import android.widget.Toast;
 
 
 public class MainActivity extends AppCompatActivity  implements NavigationView.OnNavigationItemSelectedListener {
@@ -130,6 +132,7 @@ public class MainActivity extends AppCompatActivity  implements NavigationView.O
                     finish();
                 }
                 else if(fragmentManager.getBackStackEntryCount()==0 && !homeIsShown){
+                    navigationView.getMenu().getItem(0).setChecked(true);
                     changeBackstack(false,new Fragment_home(),"Home");
                 }
                 else{
@@ -160,19 +163,18 @@ public class MainActivity extends AppCompatActivity  implements NavigationView.O
                 changeBackstack(true,new Fragment_Search(),"Search");
             }
         });
-        searchView.setOnCloseListener(new SearchView.OnCloseListener() {
+
+        ImageView closeButton = (ImageView)searchView.findViewById(R.id.search_close_btn);
+        closeButton.setOnClickListener(new View.OnClickListener() {
             @Override
-            public boolean onClose() {
-                Log.wtf("SearchView","onClose");
-                if(searching){
-                    searching=false;
-                    if(!backFromUser){
-                        Log.wtf("searchView","Closed from X");
-                        onBackPressed();
-                        backFromUser=false;
-                    }
+            public void onClick(View v) {
+                if(searchView.getQuery().toString().length()==0){
+                    onBackPressed();
+                }else{
+                    searchView.setQuery("",false);
+                    searchView.clearFocus();
+                    Fragment_Search.updateDisplayInterface(true,false,"Search Something");
                 }
-                return false;
             }
         });
 
