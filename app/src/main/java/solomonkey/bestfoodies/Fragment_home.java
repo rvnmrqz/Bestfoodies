@@ -43,6 +43,7 @@ public class Fragment_home extends Fragment {
     @Override
     public void onDestroy() {
         super.onDestroy();
+        MainActivity.homeIsShown=false;
     }
 
     @Override
@@ -50,5 +51,6 @@ public class Fragment_home extends Fragment {
         super.onResume();
         Log.wtf("HOME","onResume()");
         ((AppCompatActivity)getActivity()).getSupportActionBar().setTitle("Home");
+        MainActivity.homeIsShown=true;
     }
 }

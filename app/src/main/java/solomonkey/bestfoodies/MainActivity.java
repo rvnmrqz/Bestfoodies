@@ -1,5 +1,6 @@
 package solomonkey.bestfoodies;
 
+import android.app.Activity;
 import android.content.Context;
 import android.os.Bundle;
 import android.support.design.widget.NavigationView;
@@ -25,6 +26,7 @@ public class MainActivity extends AppCompatActivity  implements NavigationView.O
     static NavigationView navigationView;
     static ActionBar staticActionBar;
     static Context staticContext;
+    static Activity staticActivity;
     static FragmentManager fragmentManager;
     static FragmentTransaction fragmentTransaction;
     Toolbar toolbar;
@@ -32,6 +34,7 @@ public class MainActivity extends AppCompatActivity  implements NavigationView.O
     public static  MenuItem searchItem;
     static SearchView searchView;
 
+    public static boolean homeIsShown=false;
     boolean searching=false;
     boolean backFromUser=false;
 
@@ -43,20 +46,17 @@ public class MainActivity extends AppCompatActivity  implements NavigationView.O
         setSupportActionBar(toolbar);
         staticActionBar = getSupportActionBar();
         staticContext = MainActivity.this;
-
+        staticActivity = MainActivity.this;
         containerLayout = (LinearLayout) findViewById(R.id.main_container);
         fragmentManager = getSupportFragmentManager();
-
         DrawerLayout drawer = (DrawerLayout) findViewById(R.id.drawer_layout);
         ActionBarDrawerToggle toggle = new ActionBarDrawerToggle(
                 this, drawer, toolbar, R.string.navigation_drawer_open, R.string.navigation_drawer_close);
         drawer.setDrawerListener(toggle);
         toggle.syncState();
-
         navigationView = (NavigationView) findViewById(R.id.nav_view);
         navigationView.setNavigationItemSelectedListener(this);
         navigationView.getMenu().getItem(0).setChecked(true);
-
 
     }
 
@@ -70,17 +70,17 @@ public class MainActivity extends AppCompatActivity  implements NavigationView.O
                 clearBackstack();
                 getSupportActionBar().setTitle("Home");
                 navigationView.getMenu().getItem(0).setChecked(true);
-                changeBackstack(true,new Fragment_home(),"Home");
+                changeBackstack(false,new Fragment_home(),"Home");
                 break;
             case R.id.nav_categories:
                 getSupportActionBar().setTitle("Categories");
                 navigationView.getMenu().getItem(1).setChecked(true);
-                changeBackstack(true,new Fragment_Categories(), "Categories");
+                changeBackstack(false,new Fragment_Categories(), "Categories");
                 break;
             case R.id.nav_developers:
                 navigationView.getMenu().getItem(2).setChecked(true);
                 getSupportActionBar().setTitle("Developers");
-                changeBackstack(true,new Fragment_Developers(), "Developers");
+                changeBackstack(false,new Fragment_Developers(), "Developers");
                 break;
         }
         DrawerLayout drawer = (DrawerLayout) findViewById(R.id.drawer_layout);
@@ -122,12 +122,17 @@ public class MainActivity extends AppCompatActivity  implements NavigationView.O
                 backFromUser=true;
                 super.onBackPressed();
                 searchView.setIconified(true);
-
             } else {
-                Log.wtf("onBackPressed","search is  iconfied");
-                if(fragmentManager.getBackStackEntryCount()==1){
-                finish();
-                }else{
+                Log.wtf("onBackPressed","search is iconfied");
+                Log.wtf("onBackPressed","Count= "+fragmentManager.getBackStackEntryCount()+" Home is shown: "+homeIsShown);
+
+                if(fragmentManager.getBackStackEntryCount()==0 && homeIsShown){
+                    finish();
+                }
+                else if(fragmentManager.getBackStackEntryCount()==0 && !homeIsShown){
+                    changeBackstack(false,new Fragment_home(),"Home");
+                }
+                else{
                     super.onBackPressed();
                 }
             }
@@ -139,7 +144,7 @@ public class MainActivity extends AppCompatActivity  implements NavigationView.O
         getMenuInflater().inflate(R.menu.main,menu);
         searchItem = menu.findItem(R.id.search);
         searchView = (SearchView) searchItem.getActionView();
-        changeBackstack(true,new Fragment_home(),"Home");
+        changeBackstack(false,new Fragment_home(),"Home");
         searchLayoutFunction();
         return true;
     }
