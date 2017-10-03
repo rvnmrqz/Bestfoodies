@@ -1,16 +1,106 @@
-<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
+    android:background="@color/darkbackgroundColor"
+    android:fillViewport="true"
     tools:context="solomonkey.bestfoodies.Fragment_Developers">
+    <LinearLayout
+        android:orientation="vertical"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent">
+        <RelativeLayout
+            android:layout_margin="10dp"
+            android:padding="8dp"
+            android:background="@drawable/rounded_shape"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content">
+            <de.hdodenhof.circleimageview.CircleImageView
+                android:id="@+id/img_1"
+                android:src="@drawable/jerryne_smaller"
+                android:layout_alignParentTop="true"
+                android:layout_alignParentLeft="true"
+                android:layout_width="120dp"
+                android:layout_height="120dp" />
+            <TextView
+                android:textSize="23sp"
+                android:layout_centerVertical="true"
+                android:layout_toRightOf="@id/img_1"
+                android:text="Jerryne Garcia"
+                android:textStyle="bold"
+                android:textAlignment="center"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content" />
+        </RelativeLayout>
+        <RelativeLayout
+            android:layout_margin="10dp"
+            android:padding="8dp"
+            android:background="@drawable/rounded_shape"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content">
+            <de.hdodenhof.circleimageview.CircleImageView
+                android:id="@+id/img_3"
+                android:src="@drawable/grace_smaller"
+                android:layout_alignParentTop="true"
+                android:layout_alignParentRight="true"
+                android:layout_width="120dp"
+                android:layout_height="120dp" />
+            <TextView
+                android:textSize="19sp"
+                android:layout_centerVertical="true"
+                android:layout_toLeftOf="@id/img_3"
+                android:text="Merry Grace Mendoza"
+                android:textStyle="bold"
+                android:textAlignment="center"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content" />
+        </RelativeLayout>
+        <RelativeLayout
+            android:layout_margin="10dp"
+            android:padding="8dp"
+            android:background="@drawable/rounded_shape"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content">
+            <de.hdodenhof.circleimageview.CircleImageView
+                android:id="@+id/img_4"
+                android:src="@drawable/regine_smaller"
+                android:layout_alignParentTop="true"
+                android:layout_alignParentLeft="true"
+                android:layout_width="120dp"
+                android:layout_height="120dp" />
+            <TextView
+                android:textSize="22sp"
+                android:layout_centerVertical="true"
+                android:layout_toRightOf="@id/img_4"
+                android:text="Regine Prevendido"
+                android:textStyle="bold"
+                android:textAlignment="center"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content" />
+        </RelativeLayout>
+        <RelativeLayout
+            android:layout_margin="10dp"
+            android:padding="8dp"
+            android:background="@drawable/rounded_shape"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content">
+            <de.hdodenhof.circleimageview.CircleImageView
+                android:id="@+id/img_2"
+                android:src="@drawable/erica_smaller"
+                android:layout_alignParentTop="true"
+                android:layout_alignParentRight="true"
+                android:layout_width="120dp"
+                android:layout_height="120dp" />
+            <TextView
+                android:textSize="23sp"
+                android:layout_centerVertical="true"
+                android:layout_toLeftOf="@id/img_2"
+                android:text="Erica Tabora"
+                android:textStyle="bold"
+                android:textAlignment="center"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content" />
+        </RelativeLayout>
 
-    <TextView
-        android:textStyle="bold"
-        android:textSize="22sp"
-        android:text="Developers' Infomation"
-        android:layout_centerInParent="true"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content" />
-
-
-</RelativeLayout>
+    </LinearLayout>
+</ScrollView>
