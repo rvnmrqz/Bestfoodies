@@ -60,6 +60,8 @@
                 android:layout_height="wrap_content"/>
             <!--RECIPE NAME-->
             <TextView
+                android:layout_marginTop="16dp"
+                android:layout_marginBottom="16dp"
                 android:id="@+id/txt_RecipeName"
                 android:textStyle="bold"
                 android:textSize="24sp"
@@ -69,7 +71,6 @@
             <!--INGREDIENTS-->
             <TextView
                 android:text="Ingredients"
-                android:layout_marginTop="16dp"
                 android:textStyle="bold"
                 android:textSize="18sp"
                 android:layout_width="wrap_content"
@@ -99,12 +100,24 @@
                 android:scaleType="fitCenter"
                 android:layout_width="match_parent"
                 android:layout_height="200dp" />
-            <TextView
-                android:text="Rating"
-                android:textStyle="bold"
-                android:textSize="16sp"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content" />
+            <RelativeLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content">
+                <TextView
+                    android:text="Rating"
+                    android:textStyle="bold"
+                    android:textSize="16sp"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content" />
+                <TextView
+                    android:id="@+id/txtWrite_review"
+                    android:padding="4dp"
+                    android:layout_alignParentRight="true"
+                    android:textStyle="italic"
+                    android:text="Write a review"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content" />
+            </RelativeLayout>
             <RatingBar
                 android:layout_gravity="center_horizontal"
                 android:id="@+id/ratingbar"
@@ -117,7 +130,6 @@
                 android:stepSize="0.01" />
             <TextView
                 android:id="@+id/txt_recipe_reviewcount"
-                android:text="Rated by 5 People"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content" />
         </LinearLayout>

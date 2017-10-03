@@ -18,9 +18,6 @@ import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.LinearLayout;
-import android.widget.ListView;
-import android.widget.ProgressBar;
-import android.widget.TextView;
 
 
 public class MainActivity extends AppCompatActivity  implements NavigationView.OnNavigationItemSelectedListener {
@@ -123,8 +120,9 @@ public class MainActivity extends AppCompatActivity  implements NavigationView.O
             if (!searchView.isIconified()) {
                 Log.wtf("onBackPressed","search is not iconfied");
                 backFromUser=true;
-                searchView.setIconified(true);
                 super.onBackPressed();
+                searchView.setIconified(true);
+
             } else {
                 Log.wtf("onBackPressed","search is  iconfied");
                 if(fragmentManager.getBackStackEntryCount()==1){
@@ -141,7 +139,6 @@ public class MainActivity extends AppCompatActivity  implements NavigationView.O
         getMenuInflater().inflate(R.menu.main,menu);
         searchItem = menu.findItem(R.id.search);
         searchView = (SearchView) searchItem.getActionView();
-
         changeBackstack(true,new Fragment_home(),"Home");
         searchLayoutFunction();
         return true;
@@ -149,11 +146,6 @@ public class MainActivity extends AppCompatActivity  implements NavigationView.O
 
     //SEARCH LAYOUT
     protected void searchLayoutFunction(){
-        Fragment fragmentSearch = new Fragment_Search();
-      //  final LinearLayout loadinglayout = (LinearLayout) fragmentSearch.getActivity().findViewById(R.id.search_loadinglayout);
-      //  final ProgressBar progressBar = (ProgressBar) fragmentSearch.getActivity().findViewById(R.id.search_loading_progress);
-      //  final TextView textViewMessage = (TextView) fragmentSearch.getActivity().findViewById(R.id.search_loading_text);
-      //  ListView listView = (ListView) fragmentSearch.getActivity().findViewById(R.id.search_listview);
 
         searchView.setOnSearchClickListener(new View.OnClickListener() {
             @Override
@@ -167,39 +159,31 @@ public class MainActivity extends AppCompatActivity  implements NavigationView.O
             @Override
             public boolean onClose() {
                 Log.wtf("SearchView","onClose");
-                //fragmentManager.popBackStack();
                 if(searching){
                     searching=false;
                     if(!backFromUser){
                         Log.wtf("searchView","Closed from X");
                         onBackPressed();
                         backFromUser=false;
-                    }else{
-                        Log.wtf("searchView","Closed from back press");
-                        Log.wtf("searchView","Backstack Count: "+fragmentManager.getBackStackEntryCount());
-                       if(fragmentManager.getBackStackEntryCount()>0) {
-                           Log.wtf("searchView","Count>0, popping");
-                           fragmentManager.popBackStack();
-                       }
                     }
                 }
                 return false;
             }
         });
 
+
         searchView.setOnQueryTextListener(new SearchView.OnQueryTextListener() {
             @Override
             public boolean onQueryTextSubmit(String query) {
                 Log.wtf("searchView","onQueryTextSubmit");
-              //  loadinglayout.setVisibility(View.VISIBLE);
-              //  loadinglayout.bringToFront();
-              //  progressBar.setVisibility(View.VISIBLE);
-              //  textViewMessage.setText("Searching");
+                if(Fragment_Search.staticContext!=null){
+                    Fragment_Search.doSearch(query);
+                }
                 return false;
             }
             @Override
             public boolean onQueryTextChange(String s) {
-                Log.wtf("searchView","onQueryTextChange");
+
                 return false;
             }
         });

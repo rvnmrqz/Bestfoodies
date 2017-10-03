@@ -98,16 +98,18 @@ public class Fragment_Recipe_List extends Fragment {
                 loadRecipe();
             }
         });
+
+
+        //Recycler
         recyclerView = (RecyclerView) getActivity().findViewById(R.id.recyclerView);
         recipesList = new ArrayList<>();
         adapter = new RecipeAdapter(context, recipesList);
-
-        //Recycler
         RecyclerView.LayoutManager mLayoutManager = new GridLayoutManager(context,2);
         recyclerView.setLayoutManager(mLayoutManager);
         recyclerView.addItemDecoration(new GridSpacingItemDecoration(2,dpToPx(10),true));
         recyclerView.setItemAnimator(new DefaultItemAnimator());
         recyclerView.setAdapter(adapter);
+
         loadRecipe();
     }
 
@@ -134,6 +136,7 @@ public class Fragment_Recipe_List extends Fragment {
                                     Recipes recipes;
 
                                     if(Jarray.length()>0) {
+
                                         Log.wtf("onResponse","Result count: "+Jarray.length());
                                         for (int i = 0; i < Jarray.length(); i++) {
                                             JSONObject Jasonobject = Jarray.getJSONObject(i);
