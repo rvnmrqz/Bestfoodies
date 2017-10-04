@@ -315,7 +315,7 @@ public class Fragment_Recipe_Opened extends Fragment{
         if(!isNetworkAvailable()){
             showSnackbar();
         }else{
-            final String server_url = TempHolder.HOST_ADDRESS+"/do_query.php";
+            final String server_url = TempHolder.HOST_ADDRESS+"/send_review.php";
             RequestQueue requestQueue = Volley.newRequestQueue(context);
             StringRequest request = new StringRequest(Request.Method.POST, server_url,
                     new Response.Listener<String>() {
@@ -349,8 +349,11 @@ public class Fragment_Recipe_Opened extends Fragment{
                 @Override
                 protected Map<String, String> getParams() throws AuthFailureError {
                     Map<String,String> params = new HashMap<>();
-                    String query = "INSERT INTO tbl_ratings(recipe_id,datetime,title,description,rating) VALUES("+recipe_id+",NOW(),'"+title+"','"+desc+"',"+rating+");";
-                    params.put("query",query);
+                    String query = "Iecipe_id,datetime,title,description,rating) VALUES("+recipe_id+",NOW(),'"+title+"','"+desc+"',"+rating+");";
+                    params.put("recipe_id",recipe_id);
+                    params.put("title",title);
+                    params.put("description",desc);
+                    params.put("rating",rating+"");
                     Log.wtf("loadRecipe","Map<> Query: "+query);
                     return params;
                 }
@@ -364,7 +367,6 @@ public class Fragment_Recipe_Opened extends Fragment{
             requestQueue.add(request);
         }
     }
-
     private void loadReviews(){
         LayoutInflater inflater = getActivity().getLayoutInflater();
         View view =  inflater.inflate(R.layout.fragment_review, null);
@@ -440,7 +442,7 @@ public class Fragment_Recipe_Opened extends Fragment{
                 @Override
                 protected Map<String, String> getParams() throws AuthFailureError {
                     Map<String,String> params = new HashMap<>();
-                    String query = "SELECT * FROM tbl_ratings WHERE recipe_id = "+TempHolder.selectedRecipeID+";";
+                    String query = "SELECT * FROM tbl_ratings WHERE recipe_id = "+TempHolder.selectedRecipeID+" ORDER BY id desc;";
                     params.put("qry",query);
                     Log.wtf("loadRecipe","Map<> Query: "+query);
                     return params;
