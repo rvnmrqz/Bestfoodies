@@ -1,5 +1,6 @@
 package solomonkey.bestfoodies;
 
+import android.app.AlertDialog;
 import android.app.Dialog;
 import android.content.Context;
 import android.content.DialogInterface;
@@ -101,8 +102,6 @@ public class Fragment_Recipe_Opened extends Fragment{
     private ReviewAdapter adapter;
     private List<Reviews> reviewsList;
 
-
-
     @Override
     public void onViewCreated(View view, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
@@ -144,7 +143,23 @@ public class Fragment_Recipe_Opened extends Fragment{
                     if(reference.length()>4){
                         //not null
                         try{
-                            startActivity(new Intent(Intent.ACTION_VIEW, Uri.parse(reference)));
+                             new AlertDialog.Builder(context)
+                                    .setTitle("Confirmation")
+                                    .setMessage("Link will open externally, continue?")
+                                    .setPositiveButton(android.R.string.yes, new DialogInterface.OnClickListener() {
+                                        @Override
+                                        public void onClick(DialogInterface dialog, int which) {
+                                            startActivity(new Intent(Intent.ACTION_VIEW, Uri.parse(reference)));
+                                        }
+                                    })
+                                    .setNegativeButton(android.R.string.no, new DialogInterface.OnClickListener() {
+                                        @Override
+                                        public void onClick(DialogInterface dialog, int which) {
+
+                                        }
+                                    }).show();
+
+
                         }catch (Exception e){
                             Toast.makeText(context, "Can't view reference", Toast.LENGTH_SHORT).show();
                         }

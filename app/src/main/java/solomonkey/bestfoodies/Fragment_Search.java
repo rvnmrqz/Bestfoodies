@@ -106,10 +106,11 @@ public class Fragment_Search extends Fragment {
         recyclerView.setItemAnimator(new DefaultItemAnimator());
         recyclerView.setAdapter(adapter);
 
-        doSearch("a");
+        showfirst4();
     }
 
     public static void doSearch(final String keyword) {
+        recipesList.clear();
         Log.wtf("doSearch", "Keyword: " + keyword);
         updateDisplayInterface(true, true, "Searching");
         if (!isNetworkAvailable()) {
@@ -185,7 +186,79 @@ public class Fragment_Search extends Fragment {
             requestQueue.add(request);
         }
     }
-
+    public static void showfirst4(){
+        recipesList.clear();
+        updateDisplayInterface(true, true, "Searching");
+        if (!isNetworkAvailable()) {
+            showSnackbar();
+            updateDisplayInterface(true,false,"No Internet Connection");
+        } else {
+            final String server_url = TempHolder.HOST_ADDRESS + "/get_data.php";
+            requestQueue = Volley.newRequestQueue(staticContext);
+            request = new StringRequest(Request.Method.POST, server_url,
+                    new Response.Listener<String>() {
+                        @Override
+                        public void onResponse(String response) {
+                            if (response != null) {
+                                try {
+                                    Log.wtf("onResponse", "Response:" + response);
+                                    //clear the list in the UI
+                                    double rating;
+                                    String recipe_id, recipe_name, ingredients, procedures,  reviews, thumbnailfile, videolink;
+                                    JSONObject object = new JSONObject(response);
+                                    JSONArray Jarray = object.getJSONArray("mydata");
+                                    Recipes recipes;
+                                    if (Jarray.length() > 0) {
+                                        updateDisplayInterface(false,false,null);
+                                        Log.wtf("onResponse", "Result count: " + Jarray.length());
+                                        for (int i = 0; i < Jarray.length(); i++) {
+                                            JSONObject Jasonobject = Jarray.getJSONObject(i);
+                                            recipe_id = Jasonobject.getString("recipe_id");
+                                            recipe_name = Jasonobject.getString("name");
+                                            ingredients = Jasonobject.getString("ingredients");
+                                            procedures = Jasonobject.getString("procedures");
+                                            rating = Jasonobject.getDouble("rating");
+                                            reviews = Jasonobject.getString("reviews");
+                                            thumbnailfile = TempHolder.HOST_ADDRESS + "/images/" + Jasonobject.getString("imagefilename");
+                                            videolink = Jasonobject.getString("videolink");
+                                            recipes = new Recipes(recipe_id, recipe_name, ingredients, procedures, rating, reviews, thumbnailfile, videolink);
+                                            recipesList.add(recipes);
+                                            adapter.notifyDataSetChanged();
+                                        }
+                                    }
+                                } catch (Exception ee) {
+                                    updateDisplayInterface(true,false,"An Error Occurred");
+                                    Log.wtf("loadRecipe ERROR (onResponse)", ee.getMessage());
+                                }
+                            }
+                        }
+                    },
+                    new Response.ErrorListener() {
+                        @Override
+                        public void onErrorResponse(VolleyError volleyError) {
+                            String message = getVolleyError(volleyError);
+                            updateDisplayInterface(true,false,message);
+                            Log.wtf("loadRecipe: onErrorResponse", "Volley Error \n" + message);
+                        }
+                    }) {
+                @Override
+                protected Map<String, String> getParams() throws AuthFailureError {
+                    Map<String, String> params = new HashMap<>();
+                    String query = "SELECT re.*,coalesce(count(id),0) reviews,truncate(coalesce(avg(rating),0),1) rating from tbl_recipes re LEFT JOIN tbl_ratings ra ON re.recipe_id = ra.recipe_id GROUP BY re.recipe_id LIMIT 4;";
+                    params.put("qry", query);
+                    Log.wtf("loadRecipe", "Map<> Query: " + query);
+                    return params;
+                }
+            };
+            int socketTimeout = TempHolder.TIME_OUT;
+            RetryPolicy policy = new DefaultRetryPolicy(socketTimeout,
+                    DefaultRetryPolicy.DEFAULT_MAX_RETRIES,
+                    DefaultRetryPolicy.DEFAULT_BACKOFF_MULT);
+            request.setRetryPolicy(policy);
+            request.setShouldCache(false);
+            requestQueue.add(request);
+        }
+    }
 
     //CARDS PLACEMENT
     public class GridSpacingItemDecoration extends RecyclerView.ItemDecoration {
