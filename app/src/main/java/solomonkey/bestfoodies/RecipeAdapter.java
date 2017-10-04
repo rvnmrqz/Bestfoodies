@@ -10,9 +10,12 @@ import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.bumptech.glide.Glide;
 import com.squareup.picasso.Picasso;
 
 import java.util.List;
+
+import static solomonkey.bestfoodies.R.id.imageView;
 
 /**
  * Created by arvin on 10/1/2017.
@@ -65,7 +68,8 @@ public class RecipeAdapter extends RecyclerView.Adapter<RecipeAdapter.MyViewHold
         holder.recipename.setText(recipes.getRecipe_name());
         holder.ratings.setText(recipes.getRating()+"");
         // loading album cover using Picasso library
-        Picasso.with(mContext).load(recipes.getThumbnailLink()).error(R.drawable.no_image).into(holder.thumbnail);
+       // Picasso.with(mContext).load(recipes.getThumbnailLink()).resize(300,300).error(R.drawable.no_image).into(holder.thumbnail);
+       Glide.with(mContext).load(recipes.getThumbnailLink()).placeholder(R.drawable.no_image).dontAnimate().fitCenter().into(holder.thumbnail);
     }
 
     @Override
