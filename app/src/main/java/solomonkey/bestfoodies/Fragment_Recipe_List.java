@@ -99,7 +99,6 @@ public class Fragment_Recipe_List extends Fragment {
             }
         });
 
-
         //Recycler
         recyclerView = (RecyclerView) getActivity().findViewById(R.id.recyclerView);
         recipesList = new ArrayList<>();
@@ -174,7 +173,7 @@ public class Fragment_Recipe_List extends Fragment {
                 @Override
                 protected Map<String, String> getParams() throws AuthFailureError {
                     Map<String,String> params = new HashMap<>();
-                    String query = "SELECT re.*,coalesce(count(id),0) reviews,coalesce(avg(rating),0) rating from tbl_recipes re LEFT JOIN tbl_ratings ra ON re.recipe_id = ra.recipe_id "+TempHolder.listLoaderWhereClause+" GROUP BY re.recipe_id ;";
+                    String query = "SELECT re.*,coalesce(count(id),0) reviews,truncate(coalesce(avg(rating),0),1) rating from tbl_recipes re LEFT JOIN tbl_ratings ra ON re.recipe_id = ra.recipe_id "+TempHolder.listLoaderWhereClause+" GROUP BY re.recipe_id ;";
                     params.put("qry",query);
                     Log.wtf("loadRecipe","Map<> Query: "+query);
                     return params;

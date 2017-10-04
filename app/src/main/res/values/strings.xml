@@ -3,12 +3,9 @@
 
     <string name="navigation_drawer_open">Open navigation drawer</string>
     <string name="navigation_drawer_close">Close navigation drawer</string>
-
-
     <string name="action_settings">Settings</string>
     <string name="write_review"><u><i>Write a review</i></u></string>
+    <string name="reference"><u>[View Reference]</u></string>
     <string name="home_intro">Learn delicious American recipes in your mobile phone</string>
 
-    <!-- TODO: Remove or change this placeholder text -->
-    <string name="hello_blank_fragment">Hello blank fragment</string>
 </resources>

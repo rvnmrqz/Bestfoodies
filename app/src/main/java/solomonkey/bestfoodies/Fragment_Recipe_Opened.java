@@ -9,6 +9,7 @@ import android.graphics.Rect;
 import android.media.Rating;
 import android.net.ConnectivityManager;
 import android.net.NetworkInfo;
+import android.net.Uri;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.design.widget.Snackbar;
@@ -78,10 +79,11 @@ public class Fragment_Recipe_Opened extends Fragment{
     YouTubePlayer.OnInitializedListener onInitializedListener;
 
     //recipe
-    TextView txt_RecipeName,txt_recipe_ingredients,txt_recipe_procedure,txt_recipe_reviewcount;
+    TextView txt_RecipeName,txt_recipe_ingredients,txt_recipe_procedure,txt_recipe_reviewcount,txt_reference;
     ImageView img_recipe_finalimage;
     RatingBar ratingBar;
     String link;
+    String reference;
 
     //rating
     Dialog dialog;
@@ -117,6 +119,8 @@ public class Fragment_Recipe_Opened extends Fragment{
         img_recipe_finalimage = (ImageView) getActivity().findViewById(R.id.img_recipe_finalimage);
         ratingBar = (RatingBar) getActivity().findViewById(R.id.ratingbar);
         txtReviewRecipe = (TextView) getActivity().findViewById(R.id.txtWrite_review);
+        txt_reference = (TextView) getActivity().findViewById(R.id.txt_reference);
+
         youTubePlayerSupportFragment = (YouTubePlayerSupportFragment) getChildFragmentManager().findFragmentById(R.id.youtube_fragment);
 
         txtReviewRecipe.setOnClickListener(new View.OnClickListener() {
@@ -130,6 +134,27 @@ public class Fragment_Recipe_Opened extends Fragment{
             @Override
             public void onClick(View v) {
                loadReviews();
+            }
+        });
+
+        txt_reference.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                if(reference!=null){
+                    if(reference.length()>4){
+                        //not null
+                        try{
+                            startActivity(new Intent(Intent.ACTION_VIEW, Uri.parse(reference)));
+                        }catch (Exception e){
+                            Toast.makeText(context, "Can't view reference", Toast.LENGTH_SHORT).show();
+                        }
+                    }
+                    else{
+                        Toast.makeText(context, "Sorry, No reference given", Toast.LENGTH_SHORT).show();
+                    }
+                }else{
+                    Toast.makeText(context, "Sorry, No reference given", Toast.LENGTH_SHORT).show();
+                }
             }
         });
 
@@ -174,7 +199,7 @@ public class Fragment_Recipe_Opened extends Fragment{
                                         txt_recipe_ingredients.setText(Jasonobject.getString("ingredients"));
                                         txt_recipe_procedure.setText(Jasonobject.getString("procedures"));
                                         txt_recipe_reviewcount.setText(Jasonobject.getString("reviews")+" review(s)");
-
+                                        reference = Jasonobject.getString("reference");
                                         thumbnailfile = TempHolder.HOST_ADDRESS+"/images/"+Jasonobject.getString("imagefilename");
                                         Picasso.with(context).load(thumbnailfile).error(R.drawable.no_image).into(img_recipe_finalimage);
                                         link = Jasonobject.getString("videolink");
@@ -260,7 +285,6 @@ public class Fragment_Recipe_Opened extends Fragment{
             Log.wtf("prepareVideo","Throwable "+t.getMessage());
         }
     }
-
 
     private void showReviewDialog(){
         LayoutInflater inflater = getActivity().getLayoutInflater();
@@ -479,7 +503,6 @@ public class Fragment_Recipe_Opened extends Fragment{
 
     }
 
-
     //CARDS PLACEMENT
     public class GridSpacingItemDecoration extends RecyclerView.ItemDecoration {
 
@@ -519,7 +542,6 @@ public class Fragment_Recipe_Opened extends Fragment{
         Resources r = getResources();
         return Math.round(TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_DIP, dp, r.getDisplayMetrics()));
     }
-
 
     //screen transitions
     protected void showLoadingLayout(){

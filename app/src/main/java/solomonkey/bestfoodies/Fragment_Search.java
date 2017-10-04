@@ -60,8 +60,8 @@ public class Fragment_Search extends Fragment {
     static TextView textViewMessage;
     static LinearLayout resultsLayout;
 
-    RequestQueue requestQueue;
-    StringRequest request;
+    static RequestQueue requestQueue;
+    static StringRequest request;
 
     //adapaters
     private RecyclerView recyclerView;
@@ -106,6 +106,7 @@ public class Fragment_Search extends Fragment {
         recyclerView.setItemAnimator(new DefaultItemAnimator());
         recyclerView.setAdapter(adapter);
 
+        doSearch("a");
     }
 
     public static void doSearch(final String keyword) {
@@ -116,8 +117,8 @@ public class Fragment_Search extends Fragment {
             updateDisplayInterface(true,false,"No Internet Connection");
         } else {
             final String server_url = TempHolder.HOST_ADDRESS + "/get_data.php";
-            RequestQueue requestQueue = Volley.newRequestQueue(staticContext);
-            StringRequest request = new StringRequest(Request.Method.POST, server_url,
+             requestQueue = Volley.newRequestQueue(staticContext);
+             request = new StringRequest(Request.Method.POST, server_url,
                     new Response.Listener<String>() {
                         @Override
                         public void onResponse(String response) {
@@ -169,7 +170,7 @@ public class Fragment_Search extends Fragment {
                 @Override
                 protected Map<String, String> getParams() throws AuthFailureError {
                     Map<String, String> params = new HashMap<>();
-                    String query = "SELECT re.*,coalesce(count(id),0) reviews,coalesce(avg(rating),0) rating from tbl_recipes re LEFT JOIN tbl_ratings ra ON re.recipe_id = ra.recipe_id WHERE CONCAT(re.name,' ',re.ingredients,' ',re.procedures) LIKE '%"+keyword+"%' GROUP BY re.recipe_id ;";
+                    String query = "SELECT re.*,coalesce(count(id),0) reviews,truncate(coalesce(avg(rating),0),1) rating from tbl_recipes re LEFT JOIN tbl_ratings ra ON re.recipe_id = ra.recipe_id WHERE CONCAT(re.name,' ',re.ingredients,' ',re.procedures) LIKE '%"+keyword+"%' GROUP BY re.recipe_id ;";
                     params.put("qry", query);
                     Log.wtf("loadRecipe", "Map<> Query: " + query);
                     return params;
@@ -184,6 +185,7 @@ public class Fragment_Search extends Fragment {
             requestQueue.add(request);
         }
     }
+
 
     //CARDS PLACEMENT
     public class GridSpacingItemDecoration extends RecyclerView.ItemDecoration {

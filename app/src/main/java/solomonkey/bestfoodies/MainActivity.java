@@ -2,6 +2,8 @@ package solomonkey.bestfoodies;
 
 import android.app.Activity;
 import android.content.Context;
+import android.content.Intent;
+import android.net.Uri;
 import android.os.Bundle;
 import android.support.design.widget.NavigationView;
 import android.support.v4.app.Fragment;
@@ -161,6 +163,7 @@ public class MainActivity extends AppCompatActivity  implements NavigationView.O
                 Log.wtf("searchView","Search is clicked");
                 searching=true;
                 changeBackstack(true,new Fragment_Search(),"Search");
+
             }
         });
 
