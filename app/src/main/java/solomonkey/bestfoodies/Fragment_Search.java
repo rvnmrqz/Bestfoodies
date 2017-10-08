@@ -188,9 +188,8 @@ public class Fragment_Search extends Fragment {
     }
     public static void showfirst4(){
         recipesList.clear();
-        updateDisplayInterface(true, true, "Searching");
+        updateDisplayInterface(true, true, "");
         if (!isNetworkAvailable()) {
-            showSnackbar();
             updateDisplayInterface(true,false,"No Internet Connection");
         } else {
             final String server_url = TempHolder.HOST_ADDRESS + "/get_data.php";
