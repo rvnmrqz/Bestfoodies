@@ -47,6 +47,7 @@
     </LinearLayout>
     <!--RESULTS LAYOUT-->
     <LinearLayout
+        android:background="#d3d6db"
         android:id="@+id/resultlayout"
         android:visibility="visible"
         android:gravity="center"

@@ -10,10 +10,7 @@
             android:id="@+id/nav_categories"
             android:icon="@drawable/ic_nav_categories"
             android:title="Categories" />
-        <item
-            android:id="@+id/nav_developers"
-            android:icon="@drawable/ic_nav_developers"
-            android:title="Developers" />
+
     </group>
 
 

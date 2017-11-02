@@ -105,10 +105,9 @@ public class Fragment_Recipe_List extends Fragment {
         adapter = new RecipeAdapter(context, recipesList);
         RecyclerView.LayoutManager mLayoutManager = new GridLayoutManager(context,2);
         recyclerView.setLayoutManager(mLayoutManager);
-        recyclerView.addItemDecoration(new GridSpacingItemDecoration(2,dpToPx(10),true));
+        recyclerView.addItemDecoration(new GridSpacingItemDecoration(2,dpToPx(8),true));
         recyclerView.setItemAnimator(new DefaultItemAnimator());
         recyclerView.setAdapter(adapter);
-
         loadRecipe();
     }
 
@@ -119,7 +118,8 @@ public class Fragment_Recipe_List extends Fragment {
             showSnackbar();
             showMessage("No Internet Connection","Retry");
         }else{
-            final String server_url = TempHolder.HOST_ADDRESS+"/get_data.php";
+            String server_url = TempHolder.HOST_ADDRESS+"/get_data.php";
+            Log.wtf("Request Link",server_url);
             RequestQueue requestQueue = Volley.newRequestQueue(context);
             StringRequest request = new StringRequest(Request.Method.POST, server_url,
                     new Response.Listener<String>() {
@@ -127,17 +127,16 @@ public class Fragment_Recipe_List extends Fragment {
                         public void onResponse(String response) {
                             if(response!=null){
                                 try{
-                                    Log.wtf("onResponse","Response:" +response);
-                                    //clear the list in the UI
+                                    Log.wtf("onResponse","Response:" +response+"\n Response Length: "+response.length());
                                     double rating;
                                     String recipe_id,recipe_name,ingredients,procedures,reviews,thumbnailfile,videolink;
                                     JSONObject object = new JSONObject(response);
                                     JSONArray Jarray  = object.getJSONArray("mydata");
                                     Recipes recipes;
                                     if(Jarray.length()>0) {
-                                        Log.wtf("onResponse","Result count: "+Jarray.length());
                                         for (int i = 0; i < Jarray.length(); i++) {
                                             JSONObject Jasonobject = Jarray.getJSONObject(i);
+                                            Log.wtf("JSON loop","Index: "+i);
                                             recipe_id = Jasonobject.getString("recipe_id");
                                             recipe_name = Jasonobject.getString("name");
                                             ingredients = Jasonobject.getString("ingredients");
@@ -148,8 +147,8 @@ public class Fragment_Recipe_List extends Fragment {
                                             videolink = Jasonobject.getString("videolink");
                                             recipes = new Recipes(recipe_id,recipe_name,ingredients,procedures,rating,reviews,thumbnailfile,videolink);
                                             recipesList.add(recipes);
-                                            adapter.notifyDataSetChanged();
                                         }
+                                        adapter.notifyDataSetChanged();
                                         showResults();
                                     }else{
                                         showMessage("No Recipes to Display","Refresh");
@@ -173,6 +172,7 @@ public class Fragment_Recipe_List extends Fragment {
                 @Override
                 protected Map<String, String> getParams() throws AuthFailureError {
                     Map<String,String> params = new HashMap<>();
+                   // String query = "SELECT re.*,coalesce(count(id),0) reviews,truncate(coalesce(avg(rating),0),1) rating from tbl_recipes re LEFT JOIN tbl_ratings ra ON re.recipe_id = ra.recipe_id "+TempHolder.listLoaderWhereClause+" GROUP BY re.recipe_id ;";
                     String query = "SELECT re.*,coalesce(count(id),0) reviews,truncate(coalesce(avg(rating),0),1) rating from tbl_recipes re LEFT JOIN tbl_ratings ra ON re.recipe_id = ra.recipe_id "+TempHolder.listLoaderWhereClause+" GROUP BY re.recipe_id ;";
                     params.put("qry",query);
                     Log.wtf("loadRecipe","Map<> Query: "+query);

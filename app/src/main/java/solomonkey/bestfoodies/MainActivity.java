@@ -80,11 +80,11 @@ public class MainActivity extends AppCompatActivity  implements NavigationView.O
                 navigationView.getMenu().getItem(1).setChecked(true);
                 changeBackstack(false,new Fragment_Categories(), "Categories");
                 break;
-            case R.id.nav_developers:
+           /* case R.id.nav_developers:
                 navigationView.getMenu().getItem(2).setChecked(true);
                 getSupportActionBar().setTitle("Developers");
                 changeBackstack(false,new Fragment_Developers(), "Developers");
-                break;
+                break;*/
         }
         DrawerLayout drawer = (DrawerLayout) findViewById(R.id.drawer_layout);
         drawer.closeDrawer(GravityCompat.START);

@@ -67,9 +67,10 @@ public class RecipeAdapter extends RecyclerView.Adapter<RecipeAdapter.MyViewHold
         holder.recipe_id.setText(recipes.getRecipe_id());
         holder.recipename.setText(recipes.getRecipe_name());
         holder.ratings.setText(recipes.getRating()+"");
-        // loading album cover using Picasso library
-       // Picasso.with(mContext).load(recipes.getThumbnailLink()).resize(300,300).error(R.drawable.no_image).into(holder.thumbnail);
-       Glide.with(mContext).load(recipes.getThumbnailLink()).placeholder(R.drawable.no_image).dontAnimate().fitCenter().into(holder.thumbnail);
+        // loading online image
+        Log.wtf("Image URL",recipes.getThumbnailLink());
+        Picasso.with(mContext).load(recipes.getThumbnailLink()).resize(300,300).placeholder(R.drawable.no_image).into(holder.thumbnail);
+       //Glide.with(mContext).load(recipes.getThumbnailLink()).placeholder(R.drawable.no_image).dontAnimate().fitCenter().into(holder.thumbnail);
     }
 
     @Override

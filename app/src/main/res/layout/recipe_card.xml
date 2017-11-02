@@ -8,10 +8,8 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_gravity="center"
-        android:layout_margin="5dp"
         android:elevation="3dp"
         card_view:cardCornerRadius="2dp">
-
         <RelativeLayout
             android:padding="10dp"
             android:layout_width="match_parent"
@@ -21,32 +19,40 @@
                 android:visibility="gone"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content" />
-            <ImageView
-                android:id="@+id/card_thumbnail"
-                android:layout_width="match_parent"
-                android:layout_height="160dp"
-                android:background="?attr/selectableItemBackgroundBorderless"
-                android:scaleType="fitXY" />
-
             <TextView
+                android:layout_alignParentTop="true"
                 android:textStyle="bold"
                 android:id="@+id/card_recipeName"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:layout_below="@id/card_thumbnail"
                 android:gravity="center_vertical"
                 android:textAlignment="center"
                 android:maxLines="2"
                 android:lines="2"
-                android:paddingTop="10dp"
                 android:text="Recipe Name Sample" />
+            <LinearLayout
+                android:id="@+id/box"
+                android:layout_below="@id/card_recipeName"
+                android:layout_centerHorizontal="true"
+                android:background="@color/colorPrimary"
+                android:padding="1.5dp"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content">
+                <ImageView
+                    android:background="@color/colorWhite"
+                    android:padding="1dp"
+                    android:id="@+id/card_thumbnail"
+                    android:layout_width="match_parent"
+                    android:layout_height="160dp"
+                    android:scaleType="fitXY" />
+            </LinearLayout>
 
             <RelativeLayout
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_alignParentLeft="true"
                 android:layout_alignParentStart="true"
-                android:layout_below="@id/card_recipeName">
+                android:layout_below="@id/box">
                 <ImageView
                     android:id="@+id/star"
                     android:layout_width="18dp"
